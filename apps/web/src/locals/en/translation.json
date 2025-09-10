@@ -1,0 +1,96 @@
+{
+  "common": {
+    "quickpoll": "QuickPoll",
+    "adminLogin": "Login",
+    "start": "Start",
+    "results": "Results",
+    "participants": "Participants",
+    "copyright": "© 2025 Skeptic Systems. All rights reserved.",
+    "impressum": "Imprint",
+    "datenschutz": "Privacy Policy"
+  },
+  "home": {
+    "title": "Mobile-optimized quiz webapp for events and surveys",
+    "activeQuizzes": "Active",
+    "selectQuiz": "Choose a quiz and start immediately",
+    "noQuizzes": {
+      "title": "No quizzes available yet",
+      "description": "No quizzes have been created yet. Log in to create and manage quizzes.",
+      "loginPrompt": "Login to Create"
+    }
+  },
+  "features": {
+    "anonymous": {
+      "title": "Anonymous",
+      "description": "No registration required.<br />Privacy comes first."
+    },
+    "oneQuestion": {
+      "title": "1 Question per Page",
+      "description": "Focus on one question.<br />Quick and clear answers."
+    },
+    "qrStart": {
+      "title": "QR Start",
+      "description": "Easy access via QR code.<br />Perfect for events and presentations."
+    }
+  },
+  "quizzes": {
+    "vdmaSurvey": {
+      "title": "VDMA Survey 2024",
+      "description": "General survey on current topics"
+    },
+    "eventFeedback": {
+      "title": "Event Feedback",
+      "description": "Feedback on the current event"
+    },
+    "productRating": {
+      "title": "Product Rating",
+      "description": "Rating of new product features"
+    }
+  },
+  "datenschutz": {
+    "title": "Privacy Policy",
+    "lastUpdated": "Last updated: January 2025",
+    "intro": "The protection of your personal data is important to us. This privacy policy informs you about the nature, scope and purpose of the processing of personal data by our QuickPoll application.",
+    "dataController": {
+      "title": "Data Controller",
+      "content": "The data controller is Skeptic Systems. For questions about data protection, you can contact us via email."
+    },
+    "dataProcessing": {
+      "title": "Data Processing",
+      "content": "QuickPoll processes data exclusively for conducting surveys and quizzes. No personal data is stored unless you explicitly provide it."
+    },
+    "cookies": {
+      "title": "Cookies",
+      "content": "We use technically necessary cookies for the functionality of the application. These cannot be disabled."
+    },
+    "rights": {
+      "title": "Your Rights",
+      "content": "You have the right to information, correction, deletion and objection regarding your personal data."
+    }
+  },
+  "impressum": {
+    "title": "Imprint",
+    "provider": {
+      "title": "Provider",
+      "name": "Skeptic Systems",
+      "address": "Sample Street 123",
+      "city": "12345 Sample City",
+      "country": "Germany"
+    },
+    "contact": {
+      "title": "Contact",
+      "email": "Email: info@skeptic-systems.de",
+      "phone": "Phone: +49 (0) 123 456789"
+    },
+    "responsible": {
+      "title": "Responsible for Content",
+      "name": "Max Mustermann",
+      "address": "Sample Street 123",
+      "city": "12345 Sample City"
+    },
+    "disclaimer": {
+      "title": "Disclaimer",
+      "content": "The contents of our pages have been created with the greatest care. However, we cannot guarantee the accuracy, completeness and timeliness of the content."
+    }
+  }
+}

@@ -1,0 +1,48 @@
+services:
+#  app:
+#    build:
+#      context: .
+#      dockerfile: apps/web/Dockerfile
+#    ports:
+#      - "3000:3000"
+#    env_file:
+#      - .env
+#    environment:
+#      - NODE_ENV=production
+#      - DATABASE_URL=mysql://${MYSQL_USER}:${MYSQL_PASSWORD}@db:3306/quickpoll
+#      - AUTH_SECRET=${AUTH_SECRET}
+#      - NEXT_PUBLIC_BASE_URL=${NEXT_PUBLIC_BASE_URL}
+#      - NEXT_PUBLIC_PRIMARY_COLOR=${NEXT_PUBLIC_PRIMARY_COLOR}
+#      - NEXT_PUBLIC_ACCENT_COLOR=${NEXT_PUBLIC_ACCENT_COLOR}
+#    depends_on:
+#      - db
+#    restart: unless-stopped
+
+  db:
+    image: mariadb:10.11
+    container_name: quickpoll_db
+    env_file:
+      - .env
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_DATABASE=quickpoll
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+    volumes:
+      - ./db_data:/var/lib/mysql
+      - ./packages/db/schema.prisma:/docker-entrypoint-initdb.d/schema.sql
+    ports:
+      - "3306:3306"
+    restart: unless-stopped
+
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: quickpoll_phpmyadmin
+    restart: unless-stopped
+    environment:
+      PMA_HOST: db
+      PMA_PORT: 3306
+    ports:
+      - "8080:80"
+    depends_on:
+      - db

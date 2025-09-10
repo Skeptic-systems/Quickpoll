@@ -1,0 +1,175 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String   // hashed
+  role      String   @default("admin")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // BetterAuth required fields
+  name            String?
+  emailVerified   Boolean  @default(false)
+  image           String?
+  
+  // First login tracking
+  isFirstLogin    Boolean  @default(true)
+  
+  // BetterAuth relations
+  accounts Account[]
+  sessions Session[]
+
+  @@map("users")
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("verification_tokens")
+}
+
+model Quiz {
+  id                String   @id @default(cuid())
+  slug              String   @unique
+  title             String
+  isActive          Boolean  @default(false)
+  languages         String   // JSON stringified string[] like "[\"de\",\"en\"]"
+  questionsPerRun   Int      @default(15)
+  allowPublicResult Boolean  @default(true)
+  branding          Json?    // logo url, colors, etc.
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  questions Question[]
+  attempts  Attempt[]
+
+  @@map("quizzes")
+}
+
+model Question {
+  id        String   @id @default(cuid())
+  quizId    String
+  type      String   // "single" | "multi"
+  orderHint Int?
+  // i18n texts:
+  text_de   String
+  text_en   String
+  
+  choices Choice[]
+  Quiz    Quiz     @relation(fields: [quizId], references: [id], onDelete: Cascade)
+
+  @@map("questions")
+}
+
+model Choice {
+  id         String   @id @default(cuid())
+  questionId String
+  // i18n labels
+  label_de   String
+  label_en   String
+  isCorrect  Boolean? // optional, falls Bewertung benötigt
+  
+  Question Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@map("choices")
+}
+
+model Attempt {
+  id            String   @id @default(cuid())
+  quizId        String
+  lang          String   // "de" | "en"
+  // server picks 15 questionIds + order, immutable:
+  questionOrder String   // JSON stringified string[]
+  startedAt     DateTime @default(now())
+  finishedAt    DateTime?
+  clientHint    String?  // UA/IP hash or browser token (anonym)
+  
+  Quiz    Quiz     @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  answers Answer[]
+
+  @@map("attempts")
+}
+
+model Answer {
+  id         String   @id @default(cuid())
+  attemptId  String
+  questionId String
+  // store selected choice ids (supports multi):
+  choiceIds  String   // JSON stringified string[]
+  createdAt  DateTime @default(now())
+  
+  Attempt Attempt @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+
+  @@map("answers")
+}
+
+model QuestionStack {
+  id        String   @id @default(cuid())
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  questions QuestionStackItem[]
+
+  @@map("question_stacks")
+}
+
+model QuestionStackItem {
+  id             String   @id @default(cuid())
+  stackId        String
+  question       String
+  answers        String   // JSON stringified string[]
+  correctAnswers String   // JSON stringified string[] - can be multiple for multiple choice
+  questionType   String   @default("single") // "single" | "multiple"
+  order          Int      @default(0)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  
+  stack QuestionStack @relation(fields: [stackId], references: [id], onDelete: Cascade)
+
+  @@map("question_stack_items")
+}
