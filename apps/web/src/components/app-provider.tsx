@@ -13,33 +13,35 @@ interface Translations {
     impressum: string
     datenschutz: string
   }
-  landing: {
+  home: {
+    title: string
     subtitle: string
     whyQuickpoll: string
     whyQuickpollSubtitle: string
-    quizSection: {
-      loading: string
-      noQuizzesTitle: string
-      noQuizzesDescription: string
-      loginButton: string
-      startQuiz: string
-      participations: string
-      questions: string
-      perRun: string
+    activeQuizzes: string
+    selectQuiz: string
+    participations: string
+    questions: string
+    perRun: string
+    startQuiz: string
+    noQuizzes: {
+      title: string
+      description: string
+      loginPrompt: string
     }
-    features: {
-      anonymous: {
-        title: string
-        description: string
-      }
-      oneQuestion: {
-        title: string
-        description: string
-      }
-      qrStart: {
-        title: string
-        description: string
-      }
+  }
+  features: {
+    anonymous: {
+      title: string
+      description: string
+    }
+    oneQuestion: {
+      title: string
+      description: string
+    }
+    qrStart: {
+      title: string
+      description: string
     }
   }
   datenschutz: {
@@ -147,7 +149,11 @@ interface Translations {
           title: string
           description: string
         }
-        heading: {
+        randomQuestion: {
+          title: string
+          description: string
+        }
+        pageBreak: {
           title: string
           description: string
         }
@@ -166,6 +172,8 @@ interface Translations {
         videoTitle: string
         heading: string
         description: string
+        selectStack: string
+        noStacksAvailable: string
       }
       options: {
         multipleChoice: string
@@ -186,9 +194,65 @@ interface Translations {
       loading: string
       error: string
     }
+    accountSettings: {
+      title: string
+      subtitle: string
+      name: string
+      email: string
+      currentPassword: string
+      newPassword: string
+      confirmPassword: string
+      updateButton: string
+      success: string
+      error: string
+      passwordMismatch: string
+      invalidCurrentPassword: string
+    }
+    userManagement: {
+      title: string
+      subtitle: string
+      createUser: string
+      name: string
+      email: string
+      password: string
+      confirmPassword: string
+      role: string
+      admin: string
+      user: string
+      createButton: string
+      success: string
+      error: string
+      emailExists: string
+      passwordMismatch: string
+    }
     header: {
       backToHome: string
+      backToDashboard: string
       logout: string
+    }
+    quizStart: {
+      title: string
+      subtitle: string
+      quizLabel: string
+      description: string
+      instructions: {
+        title: string
+        items: string[]
+      }
+      startButton: string
+      starting: string
+      backToHome: string
+    }
+    quizExecution: {
+      pageCounter: string
+      backButton: string
+      nextButton: string
+      backToHome: string
+      notFound: {
+        title: string
+        description: string
+        backToHome: string
+      }
     }
   }
 }
@@ -199,7 +263,6 @@ interface AppContextType {
   theme: Theme
   setTheme: (theme: Theme) => void
   translations: Translations | null
-  translateText: (text: string, targetLang: Language) => Promise<string>
   isTranslating: boolean
 }
 
@@ -229,38 +292,40 @@ export function AppProvider({ children }: AppProviderProps) {
       quickpoll: "Quickpoll",
       login: "Anmelden",
       copyright: "© 2025 Skeptic Systems. Alle Rechte vorbehalten.",
-      poweredBy: "Powered by AI",
+      poweredBy: "Unterstützt von KI",
       poweredByDescription: "Intelligente Umfragen mit KI-Unterstützung für optimale Ergebnisse",
       impressum: "Impressum",
       datenschutz: "Datenschutz"
     },
-    landing: {
+    home: {
+      title: "Mobile-optimierte Quiz-Webapp für Events und Umfragen",
       subtitle: "Erstelle und führe Umfragen durch - einfach, schnell und anonym",
       whyQuickpoll: "Warum Quickpoll?",
       whyQuickpollSubtitle: "Die einfachste Art, Umfragen zu erstellen und durchzuführen",
-      quizSection: {
-        loading: "Lade verfügbare Quizzes...",
-        noQuizzesTitle: "Noch keine Quizzes verfügbar",
-        noQuizzesDescription: "Melde dich an, um Quizzes zu erstellen und Umfragen durchzuführen.",
-        loginButton: "Jetzt anmelden",
-        startQuiz: "Quiz starten",
-        participations: "Teilnahmen",
-        questions: "Fragen",
-        perRun: "pro Durchlauf"
+      activeQuizzes: "Aktive",
+      selectQuiz: "Wählen Sie ein Quiz aus und starten Sie sofort",
+      participations: "Teilnahmen",
+      questions: "Fragen",
+      perRun: "pro Durchlauf",
+      startQuiz: "Quiz starten",
+      noQuizzes: {
+        title: "Noch keine Quizzes verfügbar",
+        description: "Melde dich an, um Quizzes zu erstellen und Umfragen durchzuführen.",
+        loginPrompt: "Jetzt anmelden"
+      }
+    },
+    features: {
+      anonymous: {
+        title: "Anonyme Teilnahme",
+        description: "Teilnehmer können anonym abstimmen ohne Registrierung"
       },
-      features: {
-        anonymous: {
-          title: "Anonyme Teilnahme",
-          description: "Teilnehmer können anonym abstimmen ohne Registrierung"
-        },
-        oneQuestion: {
-          title: "Eine Frage pro Durchlauf",
-          description: "Fokussierte Umfragen mit einer zentralen Frage"
-        },
-        qrStart: {
-          title: "QR-Code Start",
-          description: "Einfacher Start über QR-Code für schnelle Teilnahme"
-        }
+      oneQuestion: {
+        title: "Eine Frage pro Durchlauf",
+        description: "Fokussierte Umfragen mit einer zentralen Frage"
+      },
+      qrStart: {
+        title: "QR-Code Start",
+        description: "Einfacher Start über QR-Code für schnelle Teilnahme"
       }
     },
     datenschutz: {
@@ -368,6 +433,14 @@ export function AppProvider({ children }: AppProviderProps) {
             title: "Video",
             description: "Füge ein Video hinzu"
           },
+          randomQuestion: {
+            title: "Zufällige Frage",
+            description: "Frage aus Stapel"
+          },
+          pageBreak: {
+            title: "Seitenumbruch",
+            description: "Seitenende"
+          },
           heading: {
             title: "Überschrift",
             description: "Füge eine Überschrift hinzu"
@@ -386,7 +459,9 @@ export function AppProvider({ children }: AppProviderProps) {
           videoUrl: "Video-URL eingeben...",
           videoTitle: "Video-Titel eingeben...",
           heading: "Überschrift eingeben...",
-          description: "Beschreibung eingeben..."
+          description: "Beschreibung eingeben...",
+          selectStack: "Fragenstapel auswählen...",
+          noStacksAvailable: "Keine Fragenstapel verfügbar"
         },
         options: {
           multipleChoice: "Mehrfachauswahl erlauben",
@@ -407,9 +482,70 @@ export function AppProvider({ children }: AppProviderProps) {
         loading: "Wird geladen...",
         error: "Ungültige Anmeldedaten"
       },
+      accountSettings: {
+        title: "Account-Einstellungen",
+        subtitle: "Verwalten Sie Ihre persönlichen Daten",
+        name: "Name",
+        email: "E-Mail",
+        currentPassword: "Aktuelles Passwort",
+        newPassword: "Neues Passwort",
+        confirmPassword: "Passwort bestätigen",
+        updateButton: "Aktualisieren",
+        success: "Account erfolgreich aktualisiert",
+        error: "Fehler beim Aktualisieren des Accounts",
+        passwordMismatch: "Passwörter stimmen nicht überein",
+        invalidCurrentPassword: "Aktuelles Passwort ist falsch"
+      },
+      userManagement: {
+        title: "Benutzerverwaltung",
+        subtitle: "Erstellen und verwalten Sie Benutzer",
+        createUser: "Neuen Benutzer erstellen",
+        name: "Name",
+        email: "E-Mail",
+        password: "Passwort",
+        confirmPassword: "Passwort bestätigen",
+        role: "Rolle",
+        admin: "Administrator",
+        user: "Benutzer",
+        createButton: "Benutzer erstellen",
+        success: "Benutzer erfolgreich erstellt",
+        error: "Fehler beim Erstellen des Benutzers",
+        emailExists: "E-Mail-Adresse bereits vorhanden",
+        passwordMismatch: "Passwörter stimmen nicht überein"
+      },
       header: {
         backToHome: "Zurück zur Startseite",
+        backToDashboard: "Zurück zum Admin-Dashboard",
         logout: "Logout"
+      },
+      quizStart: {
+        title: "Quiz starten",
+        subtitle: "Bereit für das Quiz? Hier geht's los!",
+        quizLabel: "Quiz:",
+        description: "Teste dein Wissen mit diesem spannenden Quiz!",
+        instructions: {
+          title: "Anweisungen:",
+          items: [
+            "Beantworte alle Fragen sorgfältig",
+            "Du kannst jederzeit zwischen den Fragen wechseln",
+            "Überprüfe deine Antworten vor dem Absenden",
+            "Viel Erfolg!"
+          ]
+        },
+        startButton: "Quiz starten",
+        starting: "Wird gestartet...",
+        backToHome: "Zurück zur Startseite"
+      },
+      quizExecution: {
+        pageCounter: "Seite {current} von {total}",
+        backButton: "Zurück",
+        nextButton: "Weiter",
+        backToHome: "Zurück zur Startseite",
+        notFound: {
+          title: "Quiz nicht gefunden",
+          description: "Das angeforderte Quiz konnte nicht gefunden werden.",
+          backToHome: "Zurück zur Startseite"
+        }
       },
       questions: {
         title: "Fragenstapel verwalten",
@@ -471,39 +607,39 @@ export function AppProvider({ children }: AppProviderProps) {
     }
   }, [])
 
-  // Load translations with caching
+  // Ensure admin user exists on app startup
+  useEffect(() => {
+    const ensureAdmin = async () => {
+      try {
+        await fetch('/api/ensure-admin', { method: 'POST' })
+      } catch (error) {
+        console.error('Failed to ensure admin user:', error)
+      }
+    }
+    
+    ensureAdmin()
+  }, [])
+
+  // Load translations from local files
   useEffect(() => {
     console.log('Language changed to:', language)
     const loadTranslations = async () => {
-      if (language === 'de') {
-        console.log('Setting German translations')
-        setTranslations(germanTranslations)
-        return
-      }
-
-      // Check localStorage cache first
-      const cacheKey = `quickpoll-translations-${language}`
-      const cachedTranslations = localStorage.getItem(cacheKey)
-      
-      if (cachedTranslations) {
-        try {
-          const parsed = JSON.parse(cachedTranslations)
-          console.log(`Loaded cached translations for ${language}`)
-          setTranslations(parsed)
-          return
-        } catch (error) {
-          console.warn('Failed to parse cached translations:', error)
-        }
-      }
-
-      // If no cache, translate and cache
-      console.log(`No cache found for ${language}, starting translation...`)
       setIsTranslating(true)
       try {
-        await translateAllTexts(language)
-        // Cache will be set in translateAllTexts
+        // Load translations from local JSON files
+        const response = await fetch(`/locals/${language}/translation.json`)
+        if (response.ok) {
+          const translations = await response.json()
+          console.log(`Loaded local translations for ${language}:`, translations)
+          console.log('Home section:', translations.home)
+          console.log('Home subtitle:', translations.home?.subtitle)
+          setTranslations(translations)
+        } else {
+          console.warn(`Failed to load translations for ${language}, falling back to German`)
+          setTranslations(germanTranslations)
+        }
       } catch (error) {
-        console.error('Translation failed:', error)
+        console.error('Failed to load translations:', error)
         setTranslations(germanTranslations)
       } finally {
         setIsTranslating(false)
@@ -547,11 +683,6 @@ export function AppProvider({ children }: AppProviderProps) {
 
   const setLanguage = (lang: Language) => {
     console.log('setLanguage called with:', lang)
-    
-    // Clear cache to force reload of translations
-    const cacheKey = `quickpoll-translations-${lang}`
-    localStorage.removeItem(cacheKey)
-    
     setLanguageState(lang)
     localStorage.setItem('quickpoll-language', lang)
   }
@@ -561,364 +692,6 @@ export function AppProvider({ children }: AppProviderProps) {
     localStorage.setItem('quickpoll-theme', newTheme)
   }
 
-  // Translate single text with better error handling
-  const translateText = async (text: string, targetLang: Language): Promise<string> => {
-    if (targetLang === 'de' || !text.trim()) {
-      return text
-    }
-
-    try {
-      const response = await fetch('/api/translate', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          text: text,
-          targetLang: targetLang
-        })
-      })
-
-      if (response.ok) {
-        const data = await response.json()
-        return data.translatedText || text
-      } else {
-        console.warn(`Translation failed for "${text}":`, response.statusText)
-        return text
-      }
-    } catch (error) {
-      console.warn(`Translation error for "${text}":`, error)
-      return text
-    }
-  }
-
-  // Simple translation with manual translations for key texts
-  const translateAllTexts = async (targetLang: Language) => {
-    if (targetLang === 'de') {
-      setTranslations(germanTranslations)
-      return
-    }
-
-    try {
-      console.log(`Starting translation to ${targetLang}...`)
-      
-      // Create translated version with manual translations for key texts
-      const translatedTranslations = JSON.parse(JSON.stringify(germanTranslations)) // Deep clone
-      
-      // Translate key texts manually
-      if (targetLang === 'en') {
-        translatedTranslations.common.login = "Login"
-        translatedTranslations.common.copyright = "© 2025 Skeptic Systems. All rights reserved."
-        translatedTranslations.common.poweredBy = "Powered by AI"
-        translatedTranslations.common.poweredByDescription = "Intelligent surveys with AI support for optimal results"
-        translatedTranslations.common.impressum = "Imprint"
-        translatedTranslations.common.datenschutz = "Privacy"
-        
-        translatedTranslations.landing.subtitle = "Create and conduct surveys - simple, fast and anonymous"
-        translatedTranslations.landing.whyQuickpoll = "Why Quickpoll?"
-        translatedTranslations.landing.whyQuickpollSubtitle = "The easiest way to create and conduct surveys"
-        
-        translatedTranslations.landing.quizSection.loading = "Loading available quizzes..."
-        translatedTranslations.landing.quizSection.noQuizzesTitle = "No quizzes available yet"
-        translatedTranslations.landing.quizSection.noQuizzesDescription = "Sign up to create quizzes and conduct surveys."
-        translatedTranslations.landing.quizSection.loginButton = "Sign up now"
-        translatedTranslations.landing.quizSection.startQuiz = "Start quiz"
-        translatedTranslations.landing.quizSection.participations = "Participations"
-        translatedTranslations.landing.quizSection.questions = "Questions"
-        translatedTranslations.landing.quizSection.perRun = "per run"
-        
-        translatedTranslations.landing.features.anonymous.title = "Anonymous participation"
-        translatedTranslations.landing.features.anonymous.description = "Participants can vote anonymously without registration"
-        translatedTranslations.landing.features.oneQuestion.title = "Focused surveys"
-        translatedTranslations.landing.features.oneQuestion.description = "With a central question"
-        translatedTranslations.landing.features.qrStart.title = "QR code start"
-        translatedTranslations.landing.features.qrStart.description = "Easy start via QR code for quick participation"
-        
-        // Admin translations
-        translatedTranslations.admin.features.createQuiz.title = "Create quiz"
-        translatedTranslations.admin.features.createQuiz.description = "Create new quizzes with questions and answer options for your events."
-        translatedTranslations.admin.features.manageQuestions.title = "Create questions"
-        translatedTranslations.admin.features.manageQuestions.description = "Create question stacks with questions and answers for your quizzes."
-        translatedTranslations.admin.features.viewResults.title = "View results"
-        translatedTranslations.admin.features.viewResults.description = "Analyze the results and statistics of your conducted quizzes."
-        
-        translatedTranslations.admin.quizList.title = "My Quizzes"
-        translatedTranslations.admin.quizList.createNew = "Create new quiz"
-        translatedTranslations.admin.quizList.noQuizzes.title = "No quizzes created yet"
-        translatedTranslations.admin.quizList.noQuizzes.description = "Create your first quiz to get started and conduct surveys."
-        translatedTranslations.admin.quizList.noQuizzes.createFirst = "Create first quiz →"
-        translatedTranslations.admin.quizList.actions.edit = "Edit"
-        translatedTranslations.admin.quizList.actions.results = "Results"
-        translatedTranslations.admin.quizList.status.active = "Active"
-        translatedTranslations.admin.quizList.status.inactive = "Inactive"
-        
-        translatedTranslations.admin.login.title = "Login"
-        translatedTranslations.admin.login.subtitle = "Sign in to access the admin panel"
-        translatedTranslations.admin.login.email = "Email"
-        translatedTranslations.admin.login.password = "Password"
-        translatedTranslations.admin.login.emailPlaceholder = "your@email.com"
-        translatedTranslations.admin.login.passwordPlaceholder = "••••••••"
-        translatedTranslations.admin.login.submit = "Login"
-        translatedTranslations.admin.login.loading = "Loading..."
-        translatedTranslations.admin.login.error = "Invalid login credentials"
-        
-        translatedTranslations.admin.header.backToHome = "Back to homepage"
-        translatedTranslations.admin.header.logout = "Logout"
-        
-        // Quiz Editor translations
-        translatedTranslations.admin.quizEditor.title = "Quiz Editor"
-        translatedTranslations.admin.quizEditor.quizName = "Enter quiz name..."
-        translatedTranslations.admin.quizEditor.emptyState.title = "Quiz Editor"
-        translatedTranslations.admin.quizEditor.emptyState.description = "Drag modules from the right here to create your quiz"
-        
-        translatedTranslations.admin.quizEditor.modules.title = "Modules"
-        translatedTranslations.admin.quizEditor.modules.question.title = "Question"
-        translatedTranslations.admin.quizEditor.modules.question.description = "Create a question with answers"
-        translatedTranslations.admin.quizEditor.modules.text.title = "Text"
-        translatedTranslations.admin.quizEditor.modules.text.description = "Add text"
-        translatedTranslations.admin.quizEditor.modules.image.title = "Image"
-        translatedTranslations.admin.quizEditor.modules.image.description = "Add an image"
-        translatedTranslations.admin.quizEditor.modules.video.title = "Video"
-        translatedTranslations.admin.quizEditor.modules.video.description = "Add a video"
-        translatedTranslations.admin.quizEditor.modules.heading.title = "Heading"
-        translatedTranslations.admin.quizEditor.modules.heading.description = "Add a heading"
-        
-        translatedTranslations.admin.quizEditor.actions.save = "Save"
-        translatedTranslations.admin.quizEditor.actions.addAnswer = "Add answer"
-        
-        translatedTranslations.admin.quizEditor.placeholders.question = "Enter question..."
-        translatedTranslations.admin.quizEditor.placeholders.answer = "Answer"
-        translatedTranslations.admin.quizEditor.placeholders.text = "Enter text..."
-        translatedTranslations.admin.quizEditor.placeholders.imageUrl = "Enter image URL..."
-        translatedTranslations.admin.quizEditor.placeholders.altText = "Enter alt text..."
-        translatedTranslations.admin.quizEditor.placeholders.videoUrl = "Enter video URL..."
-        translatedTranslations.admin.quizEditor.placeholders.videoTitle = "Enter video title..."
-        translatedTranslations.admin.quizEditor.placeholders.heading = "Enter heading..."
-        translatedTranslations.admin.quizEditor.placeholders.description = "Enter description..."
-        
-        translatedTranslations.admin.quizEditor.options.multipleChoice = "Allow multiple choice"
-        translatedTranslations.admin.quizEditor.options.headingSize = "Size:"
-        translatedTranslations.admin.quizEditor.options.h1 = "H1 (Large)"
-        translatedTranslations.admin.quizEditor.options.h2 = "H2 (Medium)"
-        translatedTranslations.admin.quizEditor.options.h3 = "H3 (Small)"
-        
-        // Admin questions translations
-        translatedTranslations.admin.questions.title = "Manage Question Stacks"
-        translatedTranslations.admin.questions.createNew = "Create New Question Stack"
-        translatedTranslations.admin.questions.createStack = "Create New Question Stack"
-        translatedTranslations.admin.questions.stackName = "Question Stack Name"
-        translatedTranslations.admin.questions.stackNamePlaceholder = "e.g. General Knowledge, Mathematics..."
-        translatedTranslations.admin.questions.create = "Create"
-        translatedTranslations.admin.questions.cancel = "Cancel"
-        translatedTranslations.admin.questions.noStacks.title = "No Question Stacks created yet"
-        translatedTranslations.admin.questions.noStacks.description = "Create your first question stack to collect questions and answers for your quizzes."
-        translatedTranslations.admin.questions.noStacks.createFirst = "Create first Question Stack →"
-        translatedTranslations.admin.questions.myStacks = "My Question Stacks"
-        translatedTranslations.admin.questions.questions = "Questions"
-        translatedTranslations.admin.questions.edit = "Edit"
-        translatedTranslations.admin.questions.delete = "Delete"
-        translatedTranslations.admin.questions.backToStacks = "Back to Question Stacks"
-        translatedTranslations.admin.questions.editStack = "Edit Question Stack"
-        translatedTranslations.admin.questions.addQuestion = "Add New Question"
-        translatedTranslations.admin.questions.noQuestions.title = "No Questions created yet"
-        translatedTranslations.admin.questions.noQuestions.description = "Add your first question to this question stack."
-        translatedTranslations.admin.questions.noQuestions.addFirst = "Add first Question →"
-        translatedTranslations.admin.questions.questionForm.title = "Add New Question"
-        translatedTranslations.admin.questions.questionForm.editTitle = "Edit Question"
-        translatedTranslations.admin.questions.questionForm.question = "Question"
-        translatedTranslations.admin.questions.questionForm.questionPlaceholder = "Formulate your question..."
-        translatedTranslations.admin.questions.questionForm.questionType = "Question Type"
-        translatedTranslations.admin.questions.questionForm.singleChoice = "Single Choice"
-        translatedTranslations.admin.questions.questionForm.multipleChoice = "Multiple Choice"
-        translatedTranslations.admin.questions.questionForm.answers = "Answer Options"
-        translatedTranslations.admin.questions.questionForm.addAnswer = "Add Answer"
-        translatedTranslations.admin.questions.questionForm.answerPlaceholder = "Answer"
-        translatedTranslations.admin.questions.questionForm.correctAnswer = "Correct Answer"
-        translatedTranslations.admin.questions.questionForm.correctAnswerPlaceholder = "Select the correct answer..."
-        translatedTranslations.admin.questions.questionForm.save = "Save"
-        translatedTranslations.admin.questions.questionForm.update = "Update"
-        translatedTranslations.admin.questions.questionForm.cancel = "Cancel"
-        translatedTranslations.admin.questions.deleteConfirm.title = "Delete Question Stack"
-        translatedTranslations.admin.questions.deleteConfirm.message = "Are you sure you want to delete this question stack? This action cannot be undone."
-        translatedTranslations.admin.questions.deleteConfirm.confirm = "Delete"
-        translatedTranslations.admin.questions.deleteConfirm.cancel = "Cancel"
-      } else if (targetLang === 'fr') {
-        translatedTranslations.common.login = "Connexion"
-        translatedTranslations.common.copyright = "© 2025 Skeptic Systems. Tous droits réservés."
-        translatedTranslations.common.poweredBy = "Alimenté par l'IA"
-        translatedTranslations.common.poweredByDescription = "Sondages intelligents avec support IA pour des résultats optimaux"
-        translatedTranslations.common.impressum = "Mentions légales"
-        translatedTranslations.common.datenschutz = "Confidentialité"
-        
-        translatedTranslations.landing.subtitle = "Créez et menez des sondages - simple, rapide et anonyme"
-        translatedTranslations.landing.whyQuickpoll = "Pourquoi Quickpoll ?"
-        translatedTranslations.landing.whyQuickpollSubtitle = "Le moyen le plus simple de créer et mener des sondages"
-        
-        translatedTranslations.landing.quizSection.loading = "Chargement des quiz disponibles..."
-        translatedTranslations.landing.quizSection.noQuizzesTitle = "Aucun quiz disponible pour le moment"
-        translatedTranslations.landing.quizSection.noQuizzesDescription = "Inscrivez-vous pour créer des quiz et mener des sondages."
-        translatedTranslations.landing.quizSection.loginButton = "S'inscrire maintenant"
-        translatedTranslations.landing.quizSection.startQuiz = "Commencer le quiz"
-        translatedTranslations.landing.quizSection.participations = "Participations"
-        translatedTranslations.landing.quizSection.questions = "Questions"
-        translatedTranslations.landing.quizSection.perRun = "par exécution"
-        
-        translatedTranslations.landing.features.anonymous.title = "Participation anonyme"
-        translatedTranslations.landing.features.anonymous.description = "Les participants peuvent voter anonymement sans inscription"
-        translatedTranslations.landing.features.oneQuestion.title = "Sondages ciblés"
-        translatedTranslations.landing.features.oneQuestion.description = "Avec une question centrale"
-        translatedTranslations.landing.features.qrStart.title = "Démarrage QR"
-        translatedTranslations.landing.features.qrStart.description = "Démarrage facile via QR code pour une participation rapide"
-        
-        // Admin translations
-        translatedTranslations.admin.features.createQuiz.title = "Créer un quiz"
-        translatedTranslations.admin.features.createQuiz.description = "Créez de nouveaux quiz avec des questions et des options de réponse pour vos événements."
-        translatedTranslations.admin.features.manageQuestions.title = "Créer des questions"
-        translatedTranslations.admin.features.manageQuestions.description = "Créez des piles de questions avec des questions et réponses pour vos quiz."
-        translatedTranslations.admin.features.viewResults.title = "Voir les résultats"
-        translatedTranslations.admin.features.viewResults.description = "Analysez les résultats et statistiques de vos quiz menés."
-        
-        translatedTranslations.admin.quizList.title = "Mes Quiz"
-        translatedTranslations.admin.quizList.createNew = "Créer un nouveau quiz"
-        translatedTranslations.admin.quizList.noQuizzes.title = "Aucun quiz créé pour le moment"
-        translatedTranslations.admin.quizList.noQuizzes.description = "Créez votre premier quiz pour commencer et mener des sondages."
-        translatedTranslations.admin.quizList.noQuizzes.createFirst = "Créer le premier quiz →"
-        translatedTranslations.admin.quizList.actions.edit = "Modifier"
-        translatedTranslations.admin.quizList.actions.results = "Résultats"
-        translatedTranslations.admin.quizList.status.active = "Actif"
-        translatedTranslations.admin.quizList.status.inactive = "Inactif"
-        
-        translatedTranslations.admin.login.title = "Connexion"
-        translatedTranslations.admin.login.subtitle = "Connectez-vous pour accéder au panneau d'administration"
-        translatedTranslations.admin.login.email = "Email"
-        translatedTranslations.admin.login.password = "Mot de passe"
-        translatedTranslations.admin.login.emailPlaceholder = "votre@email.com"
-        translatedTranslations.admin.login.passwordPlaceholder = "••••••••"
-        translatedTranslations.admin.login.submit = "Connexion"
-        translatedTranslations.admin.login.loading = "Chargement..."
-        translatedTranslations.admin.login.error = "Identifiants de connexion invalides"
-        
-        translatedTranslations.admin.header.backToHome = "Retour à l'accueil"
-        translatedTranslations.admin.header.logout = "Déconnexion"
-        
-        // Quiz Editor translations
-        translatedTranslations.admin.quizEditor.title = "Éditeur de Quiz"
-        translatedTranslations.admin.quizEditor.quizName = "Entrez le nom du quiz..."
-        translatedTranslations.admin.quizEditor.emptyState.title = "Éditeur de Quiz"
-        translatedTranslations.admin.quizEditor.emptyState.description = "Glissez les modules de droite ici pour créer votre quiz"
-        
-        translatedTranslations.admin.quizEditor.modules.title = "Modules"
-        translatedTranslations.admin.quizEditor.modules.question.title = "Question"
-        translatedTranslations.admin.quizEditor.modules.question.description = "Créer une question avec des réponses"
-        translatedTranslations.admin.quizEditor.modules.text.title = "Texte"
-        translatedTranslations.admin.quizEditor.modules.text.description = "Ajouter du texte"
-        translatedTranslations.admin.quizEditor.modules.image.title = "Image"
-        translatedTranslations.admin.quizEditor.modules.image.description = "Ajouter une image"
-        translatedTranslations.admin.quizEditor.modules.video.title = "Vidéo"
-        translatedTranslations.admin.quizEditor.modules.video.description = "Ajouter une vidéo"
-        translatedTranslations.admin.quizEditor.modules.heading.title = "Titre"
-        translatedTranslations.admin.quizEditor.modules.heading.description = "Ajouter un titre"
-        
-        translatedTranslations.admin.quizEditor.actions.save = "Enregistrer"
-        translatedTranslations.admin.quizEditor.actions.addAnswer = "Ajouter une réponse"
-        
-        translatedTranslations.admin.quizEditor.placeholders.question = "Entrez la question..."
-        translatedTranslations.admin.quizEditor.placeholders.answer = "Réponse"
-        translatedTranslations.admin.quizEditor.placeholders.text = "Entrez le texte..."
-        translatedTranslations.admin.quizEditor.placeholders.imageUrl = "Entrez l'URL de l'image..."
-        translatedTranslations.admin.quizEditor.placeholders.altText = "Entrez le texte alternatif..."
-        translatedTranslations.admin.quizEditor.placeholders.videoUrl = "Entrez l'URL de la vidéo..."
-        translatedTranslations.admin.quizEditor.placeholders.videoTitle = "Entrez le titre de la vidéo..."
-        translatedTranslations.admin.quizEditor.placeholders.heading = "Entrez le titre..."
-        translatedTranslations.admin.quizEditor.placeholders.description = "Entrez la description..."
-        
-        translatedTranslations.admin.quizEditor.options.multipleChoice = "Autoriser le choix multiple"
-        translatedTranslations.admin.quizEditor.options.headingSize = "Taille :"
-        translatedTranslations.admin.quizEditor.options.h1 = "H1 (Grand)"
-        translatedTranslations.admin.quizEditor.options.h2 = "H2 (Moyen)"
-        translatedTranslations.admin.quizEditor.options.h3 = "H3 (Petit)"
-        
-        // Admin questions translations
-        translatedTranslations.admin.questions.title = "Gérer les Piles de Questions"
-        translatedTranslations.admin.questions.createNew = "Créer une Nouvelle Pile de Questions"
-        translatedTranslations.admin.questions.createStack = "Créer une Nouvelle Pile de Questions"
-        translatedTranslations.admin.questions.stackName = "Nom de la Pile de Questions"
-        translatedTranslations.admin.questions.stackNamePlaceholder = "ex. Culture Générale, Mathématiques..."
-        translatedTranslations.admin.questions.create = "Créer"
-        translatedTranslations.admin.questions.cancel = "Annuler"
-        translatedTranslations.admin.questions.noStacks.title = "Aucune Pile de Questions créée"
-        translatedTranslations.admin.questions.noStacks.description = "Créez votre première pile de questions pour collecter des questions et réponses pour vos quiz."
-        translatedTranslations.admin.questions.noStacks.createFirst = "Créer la première Pile de Questions →"
-        translatedTranslations.admin.questions.myStacks = "Mes Piles de Questions"
-        translatedTranslations.admin.questions.questions = "Questions"
-        translatedTranslations.admin.questions.edit = "Modifier"
-        translatedTranslations.admin.questions.delete = "Supprimer"
-        translatedTranslations.admin.questions.backToStacks = "Retour aux Piles de Questions"
-        translatedTranslations.admin.questions.editStack = "Modifier la Pile de Questions"
-        translatedTranslations.admin.questions.addQuestion = "Ajouter une Nouvelle Question"
-        translatedTranslations.admin.questions.noQuestions.title = "Aucune Question créée"
-        translatedTranslations.admin.questions.noQuestions.description = "Ajoutez votre première question à cette pile de questions."
-        translatedTranslations.admin.questions.noQuestions.addFirst = "Ajouter la première Question →"
-        translatedTranslations.admin.questions.questionForm.title = "Ajouter une Nouvelle Question"
-        translatedTranslations.admin.questions.questionForm.editTitle = "Modifier la Question"
-        translatedTranslations.admin.questions.questionForm.question = "Question"
-        translatedTranslations.admin.questions.questionForm.questionPlaceholder = "Formulez votre question..."
-        translatedTranslations.admin.questions.questionForm.questionType = "Type de Question"
-        translatedTranslations.admin.questions.questionForm.singleChoice = "Choix Unique"
-        translatedTranslations.admin.questions.questionForm.multipleChoice = "Choix Multiple"
-        translatedTranslations.admin.questions.questionForm.answers = "Options de Réponse"
-        translatedTranslations.admin.questions.questionForm.addAnswer = "Ajouter une Réponse"
-        translatedTranslations.admin.questions.questionForm.answerPlaceholder = "Réponse"
-        translatedTranslations.admin.questions.questionForm.correctAnswer = "Bonne Réponse"
-        translatedTranslations.admin.questions.questionForm.correctAnswerPlaceholder = "Sélectionnez la bonne réponse..."
-        translatedTranslations.admin.questions.questionForm.save = "Enregistrer"
-        translatedTranslations.admin.questions.questionForm.update = "Mettre à jour"
-        translatedTranslations.admin.questions.questionForm.cancel = "Annuler"
-        translatedTranslations.admin.questions.deleteConfirm.title = "Supprimer la Pile de Questions"
-        translatedTranslations.admin.questions.deleteConfirm.message = "Êtes-vous sûr de vouloir supprimer cette pile de questions ? Cette action ne peut pas être annulée."
-        translatedTranslations.admin.questions.deleteConfirm.confirm = "Supprimer"
-        translatedTranslations.admin.questions.deleteConfirm.cancel = "Annuler"
-      }
-      
-      console.log(`Translation to ${targetLang} completed`)
-      
-      // Cache the translations
-      const cacheKey = `quickpoll-translations-${targetLang}`
-      localStorage.setItem(cacheKey, JSON.stringify(translatedTranslations))
-      
-      setTranslations(translatedTranslations)
-    } catch (error) {
-      console.error('Failed to translate texts:', error)
-      console.log('Falling back to German translations')
-      setTranslations(germanTranslations)
-    }
-  }
-
-  const translateObject = async (obj: any, targetLang: Language): Promise<any> => {
-    if (typeof obj === 'string') {
-      try {
-        const translated = await translateText(obj, targetLang)
-        console.log(`Translated: "${obj}" -> "${translated}"`)
-        return translated
-      } catch (error) {
-        console.warn(`Failed to translate "${obj}":`, error)
-        return obj // Return original text on error
-      }
-    } else if (Array.isArray(obj)) {
-      const result = []
-      for (const item of obj) {
-        result.push(await translateObject(item, targetLang))
-      }
-      return result
-    } else if (obj && typeof obj === 'object') {
-      const result: any = {}
-      for (const [key, value] of Object.entries(obj)) {
-        result[key] = await translateObject(value, targetLang)
-      }
-      return result
-    }
-    return obj
-  }
 
   // Load saved preferences
   useEffect(() => {
@@ -947,7 +720,6 @@ export function AppProvider({ children }: AppProviderProps) {
       theme,
       setTheme,
       translations,
-      translateText,
       isTranslating
     }}>
       {children}

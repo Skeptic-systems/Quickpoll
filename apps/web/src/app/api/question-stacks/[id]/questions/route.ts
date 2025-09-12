@@ -6,11 +6,11 @@ export async function POST(
   { params }: { params: { id: string } }
 ) {
   try {
-    const { question, answers, correctAnswer, questionType = 'single' } = await request.json()
+    const { question, answers, correctAnswers, questionType = 'single' } = await request.json()
 
-    if (!question || !answers || !correctAnswer) {
+    if (!question || !answers || !correctAnswers) {
       return NextResponse.json(
-        { error: 'Question, answers, and correctAnswer are required' },
+        { error: 'Question, answers, and correctAnswers are required' },
         { status: 400 }
       )
     }
@@ -19,6 +19,14 @@ export async function POST(
     if (!['single', 'multiple'].includes(questionType)) {
       return NextResponse.json(
         { error: 'questionType must be either "single" or "multiple"' },
+        { status: 400 }
+      )
+    }
+
+    // For single choice, ensure only one correct answer
+    if (questionType === 'single' && Array.isArray(correctAnswers) && correctAnswers.length !== 1) {
+      return NextResponse.json(
+        { error: 'Single choice questions must have exactly one correct answer' },
         { status: 400 }
       )
     }
@@ -35,7 +43,7 @@ export async function POST(
         stackId: params.id,
         question: question.trim(),
         answers: JSON.stringify(answers),
-        correctAnswer: correctAnswer.trim(),
+        correctAnswers: JSON.stringify(correctAnswers),
         questionType: questionType,
         order: (maxOrder?.order || 0) + 1
       }

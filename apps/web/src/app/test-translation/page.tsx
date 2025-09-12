@@ -4,28 +4,14 @@ import { useState } from 'react'
 import { useApp } from '@/components/app-provider'
 
 export default function TranslationTest() {
-  const { translateText, language, setLanguage } = useApp()
+  const { translations, language, setLanguage } = useApp()
   const [testText, setTestText] = useState('Hallo Welt! Das ist ein Test.')
-  const [translatedText, setTranslatedText] = useState('')
-  const [isTranslating, setIsTranslating] = useState(false)
-
-  const handleTranslate = async () => {
-    setIsTranslating(true)
-    try {
-      const result = await translateText(testText, language)
-      setTranslatedText(result)
-    } catch (error) {
-      console.error('Translation failed:', error)
-    } finally {
-      setIsTranslating(false)
-    }
-  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-orange-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 p-8">
       <div className="max-w-2xl mx-auto">
         <h1 className="text-3xl font-bold text-slate-900 dark:text-white mb-8">
-          Übersetzungs-Test
+          Lokale Übersetzungen Test
         </h1>
         
         <div className="space-y-6">
@@ -57,7 +43,7 @@ export default function TranslationTest() {
 
           <div>
             <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-              Text zum Übersetzen:
+              Test-Text:
             </label>
             <textarea
               value={testText}
@@ -67,21 +53,27 @@ export default function TranslationTest() {
             />
           </div>
 
-          <button
-            onClick={handleTranslate}
-            disabled={isTranslating}
-            className="px-6 py-3 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-semibold rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
-          >
-            {isTranslating ? 'Übersetze...' : 'Übersetzen'}
-          </button>
+          <div className="p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-xl">
+            <h3 className="text-lg font-semibold text-green-800 dark:text-green-200 mb-2">
+              ✅ Lokale Übersetzungen aktiv!
+            </h3>
+            <p className="text-green-700 dark:text-green-300">
+              Die App verwendet jetzt lokale Übersetzungsdateien anstatt der DeepL API. 
+              Alle Übersetzungen werden aus den JSON-Dateien in <code>/public/locals/</code> geladen.
+            </p>
+          </div>
 
-          {translatedText && (
+          {translations && (
             <div>
               <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-                Übersetztes Ergebnis:
+                Aktuelle Übersetzungen (Beispiele):
               </label>
-              <div className="p-4 bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm rounded-xl border-2 border-orange-200/50 dark:border-slate-700/50">
-                <p className="text-slate-900 dark:text-white">{translatedText}</p>
+              <div className="p-4 bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm rounded-xl border-2 border-orange-200/50 dark:border-slate-700/50 space-y-2">
+                <p><strong>Quickpoll:</strong> {translations.common.quickpoll}</p>
+                <p><strong>Login:</strong> {translations.common.login}</p>
+                <p><strong>Impressum:</strong> {translations.common.impressum}</p>
+                <p><strong>Datenschutz:</strong> {translations.common.datenschutz}</p>
+                <p><strong>Powered by AI:</strong> {translations.common.poweredBy}</p>
               </div>
             </div>
           )}
@@ -90,3 +82,4 @@ export default function TranslationTest() {
     </div>
   )
 }
+

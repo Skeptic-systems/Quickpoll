@@ -12,7 +12,7 @@ export function LoginOverlay({ onLogin }: LoginOverlayProps) {
   const [password, setPassword] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
-  const { translations } = useApp()
+  const { translations, language } = useApp()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -26,7 +26,7 @@ export function LoginOverlay({ onLogin }: LoginOverlayProps) {
       }
     } catch (error) {
       console.error('Login error:', error)
-      setError('Ein Fehler ist aufgetreten')
+      setError(translations?.admin.login.error || 'Ein Fehler ist aufgetreten')
     } finally {
       setIsLoading(false)
     }

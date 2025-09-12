@@ -2,6 +2,7 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import { useState, useEffect } from 'react'
 import { ThemeToggle } from './theme-toggle'
 import { LanguageSwitcher } from './language-switcher'
@@ -10,6 +11,10 @@ import { useApp } from './app-provider'
 export function AdminHeader() {
   const [isDark, setIsDark] = useState(false)
   const { translations } = useApp()
+  const pathname = usePathname()
+  
+  // Check if we're on an admin subpage
+  const isAdminSubpage = pathname !== '/admin'
 
   useEffect(() => {
     // Check initial theme
@@ -67,10 +72,10 @@ export function AdminHeader() {
             <LanguageSwitcher />
             <ThemeToggle />
             <Link
-              href="/"
+              href={isAdminSubpage ? "/admin" : "/"}
               className="px-4 py-2 text-slate-600 dark:text-slate-400 hover:text-orange-600 dark:hover:text-orange-400 transition-colors text-base font-medium"
             >
-              {translations?.admin.header.backToHome}
+              {isAdminSubpage ? translations?.admin.header.backToDashboard : translations?.admin.header.backToHome}
             </Link>
             <button
               onClick={async () => {

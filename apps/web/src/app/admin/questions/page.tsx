@@ -18,8 +18,8 @@ interface QuestionStackItem {
   id: string
   stackId: string
   question: string
-  answers: string // JSON stringified
-  correctAnswer: string
+  answers: string[] // Array of strings
+  correctAnswer: string[] // Array of correct answers
   order: number
   createdAt: string
   updatedAt: string
@@ -41,10 +41,13 @@ export default function QuestionsPage() {
         const response = await fetch('/api/question-stacks')
         if (response.ok) {
           const data = await response.json()
-          setQuestionStacks(data.questionStacks)
+          setQuestionStacks(data.questionStacks || [])
+        } else {
+          setQuestionStacks([])
         }
       } catch (error) {
         console.error('Error fetching question stacks:', error)
+        setQuestionStacks([])
       } finally {
         setIsLoading(false)
       }
@@ -203,7 +206,7 @@ export default function QuestionsPage() {
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500 mx-auto mb-4"></div>
               <p className="text-slate-600 dark:text-slate-400">Lade Fragenstapel...</p>
             </div>
-          ) : questionStacks.length === 0 ? (
+          ) : !questionStacks || questionStacks.length === 0 ? (
             <div className="text-center py-16">
               <div className="w-20 h-20 bg-gradient-to-br from-orange-400 to-orange-500 rounded-2xl flex items-center justify-center mx-auto mb-6">
                 <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">

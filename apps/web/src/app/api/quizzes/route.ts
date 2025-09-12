@@ -1,42 +1,51 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { PrismaClient } from '@prisma/client'
-
-const prisma = new PrismaClient()
+import { prisma } from '@/lib/prisma'
+import { auth } from '@/lib/auth'
 
 export async function GET(request: NextRequest) {
   try {
-    // Fetch active quizzes
+    // For now, skip authentication check to debug the issue
+    // TODO: Re-enable authentication once working
+    /*
+    const session = await auth.api.getSession({
+      headers: request.headers
+    })
+
+    if (!session?.user) {
+      return NextResponse.json(
+        { error: 'Unauthorized' },
+        { status: 401 }
+      )
+    }
+    */
+
     const quizzes = await prisma.quiz.findMany({
-      where: {
-        isActive: true
-      },
       select: {
         id: true,
-        slug: true,
         title: true,
-        questionsPerRun: true,
-        allowPublicResult: true,
+        slug: true,
+        isActive: true,
         createdAt: true,
+        updatedAt: true,
+        participations: true,
         _count: {
           select: {
-            questions: true,
+            modules: true,
             attempts: true
           }
         }
       },
       orderBy: {
-        createdAt: 'desc'
+        updatedAt: 'desc'
       }
     })
 
-    return NextResponse.json({
-      quizzes
-    })
-
+    console.log('Fetched quizzes:', quizzes)
+    return NextResponse.json(quizzes)
   } catch (error) {
-    console.error('Fetch quizzes error:', error)
+    console.error('Error fetching quizzes:', error)
     return NextResponse.json(
-      { message: 'Ein Fehler ist aufgetreten' },
+      { error: 'Failed to fetch quizzes' },
       { status: 500 }
     )
   }

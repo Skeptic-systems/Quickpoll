@@ -19,7 +19,7 @@ interface QuestionStackItem {
   stackId: string
   question: string
   answers: string // JSON stringified
-  correctAnswer: string
+  correctAnswers: string // JSON stringified - can be multiple for multiple choice
   questionType: string // "single" | "multiple"
   order: number
   createdAt: string
@@ -31,6 +31,7 @@ export default function QuestionStackEditorPage() {
   const stackId = params.id as string
   
   const [questionStack, setQuestionStack] = useState<QuestionStack | null>(null)
+  const [localQuestions, setLocalQuestions] = useState<QuestionStackItem[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [showQuestionForm, setShowQuestionForm] = useState(false)
   const [editingQuestion, setEditingQuestion] = useState<QuestionStackItem | null>(null)
@@ -40,8 +41,75 @@ export default function QuestionStackEditorPage() {
   // Form state
   const [questionText, setQuestionText] = useState('')
   const [answers, setAnswers] = useState<string[]>(['', ''])
-  const [correctAnswer, setCorrectAnswer] = useState('')
+  const [correctAnswers, setCorrectAnswers] = useState<string[]>([])
   const [questionType, setQuestionType] = useState<'single' | 'multiple'>('single')
+  const [isSaving, setIsSaving] = useState(false)
+
+  // Handle saving the entire question stack with all questions
+  const handleSaveStack = async () => {
+    console.log('handleSaveStack called')
+    console.log('questionStack:', questionStack)
+    console.log('localQuestions:', localQuestions)
+    console.log('stackId:', stackId)
+    
+    if (!questionStack) {
+      console.log('No questionStack found')
+      return
+    }
+    
+    setIsSaving(true)
+    try {
+      const requestData = {
+        name: questionStack.name,
+        questions: localQuestions.map((q, index) => ({
+          id: q.id,
+          question: q.question,
+          answers: typeof q.answers === 'string' ? JSON.parse(q.answers) : q.answers,
+          correctAnswers: typeof q.correctAnswers === 'string' ? JSON.parse(q.correctAnswers) : q.correctAnswers,
+          questionType: q.questionType,
+          order: index + 1
+        }))
+      }
+      
+      console.log('Sending request data:', requestData)
+      
+      // Save all questions to the database
+      const response = await fetch(`/api/question-stacks/${stackId}/save`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestData)
+      })
+
+      console.log('Response status:', response.status)
+      console.log('Response ok:', response.ok)
+
+      if (response.ok) {
+        const data = await response.json()
+        console.log('Question stack saved:', data.questionStack)
+        
+        // Update local state with saved questions
+        setQuestionStack(prev => prev ? {
+          ...prev,
+          questions: localQuestions,
+          updatedAt: new Date().toISOString()
+        } : null)
+        
+        // Success - no popup needed
+      } else {
+        const errorText = await response.text()
+        console.error('Response error:', errorText)
+        throw new Error(`Failed to save question stack: ${response.status}`)
+      }
+      
+    } catch (error) {
+      console.error('Error saving question stack:', error)
+      alert(`Fehler beim Speichern des Fragenstapels: ${error.message}`)
+    } finally {
+      setIsSaving(false)
+    }
+  }
 
   useEffect(() => {
     const fetchQuestionStack = async () => {
@@ -50,7 +118,9 @@ export default function QuestionStackEditorPage() {
           const response = await fetch(`/api/question-stacks/${stackId}`)
           if (response.ok) {
             const data = await response.json()
-            setQuestionStack(data.questionStack)
+            setQuestionStack(data)
+            // Initialize local questions with data from database
+            setLocalQuestions(data.questions || [])
           } else {
             console.error('Failed to fetch question stack')
           }
@@ -82,47 +152,43 @@ export default function QuestionStackEditorPage() {
     setAnswers(newAnswers)
   }
 
-  const handleSaveQuestion = async () => {
-    if (questionText.trim() && answers.some(a => a.trim()) && correctAnswer.trim()) {
-      try {
-        const response = await fetch(`/api/question-stacks/${stackId}/questions`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            question: questionText.trim(),
-            answers: answers.filter(a => a.trim()),
-            correctAnswer: correctAnswer.trim(),
-            questionType: questionType
-          })
-        })
-
-        if (response.ok) {
-          const data = await response.json()
-          const newQuestion = data.questionStackItem
-          
-          // Add to local state
-          if (questionStack) {
-            setQuestionStack({
-              ...questionStack,
-              questions: [...questionStack.questions, newQuestion]
-            })
-          }
-          
-          // Reset form
-          setQuestionText('')
-          setAnswers(['', ''])
-          setCorrectAnswer('')
-          setQuestionType('single')
-          setShowQuestionForm(false)
-          setEditingQuestion(null)
-        } else {
-          console.error('Failed to save question')
-        }
-      } catch (error) {
-        console.error('Error saving question:', error)
+  const handleSaveQuestion = () => {
+    if (questionText.trim() && answers.some(a => a.trim()) && correctAnswers.length > 0) {
+      const newQuestion: QuestionStackItem = {
+        id: editingQuestion ? editingQuestion.id : `temp-${Date.now()}`,
+        stackId: stackId,
+        question: questionText.trim(),
+        answers: JSON.stringify(answers.filter(a => a.trim())),
+        correctAnswers: JSON.stringify(correctAnswers),
+        questionType: questionType,
+        order: editingQuestion ? editingQuestion.order : localQuestions.length + 1,
+        createdAt: editingQuestion ? editingQuestion.createdAt : new Date().toISOString(),
+        updatedAt: new Date().toISOString()
       }
+
+      if (editingQuestion) {
+        // Update existing question
+        setLocalQuestions(prev => 
+          prev.map(q => q.id === editingQuestion.id ? newQuestion : q)
+        )
+      } else {
+        // Add new question
+        setLocalQuestions(prev => [...prev, newQuestion])
+      }
+      
+      // Reset form
+      setQuestionText('')
+      setAnswers(['', ''])
+      setCorrectAnswers([])
+      setQuestionType('single')
+      setShowQuestionForm(false)
+      setEditingQuestion(null)
+    }
+  }
+
+  const handleDeleteQuestion = (questionId: string) => {
+    if (confirm('Möchtest du diese Frage wirklich löschen?')) {
+      setLocalQuestions(prev => prev.filter(q => q.id !== questionId))
     }
   }
 
@@ -136,9 +202,21 @@ export default function QuestionStackEditorPage() {
 
   const handleDrop = (e: React.DragEvent, targetIndex: number) => {
     e.preventDefault()
-    if (draggedQuestion && questionStack) {
-      // TODO: Reorder questions
-      console.log('Reordering question:', draggedQuestion.id, 'to position:', targetIndex)
+    if (draggedQuestion) {
+      const draggedIndex = localQuestions.findIndex(q => q.id === draggedQuestion.id)
+      if (draggedIndex !== -1 && draggedIndex !== targetIndex) {
+        const newQuestions = [...localQuestions]
+        const [draggedItem] = newQuestions.splice(draggedIndex, 1)
+        newQuestions.splice(targetIndex, 0, draggedItem)
+        
+        // Update order numbers
+        const updatedQuestions = newQuestions.map((q, index) => ({
+          ...q,
+          order: index + 1
+        }))
+        
+        setLocalQuestions(updatedQuestions)
+      }
     }
     setDraggedQuestion(null)
   }
@@ -180,20 +258,41 @@ export default function QuestionStackEditorPage() {
               {questionStack?.name || 'Fragenstapel bearbeiten'}
             </h1>
           </div>
-          <button
-            onClick={() => setShowQuestionForm(true)}
-            className="px-6 py-3 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-semibold rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 flex items-center"
-          >
-            <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-            </svg>
-            Neue Frage hinzufügen
-          </button>
+          <div className="flex space-x-4">
+            <button
+              onClick={() => setShowQuestionForm(true)}
+              className="px-6 py-3 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-semibold rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 flex items-center"
+            >
+              <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+              </svg>
+              Neue Frage hinzufügen
+            </button>
+            <button
+              onClick={handleSaveStack}
+              disabled={isSaving}
+              className="px-6 py-3 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 disabled:from-gray-400 disabled:to-gray-500 text-white font-semibold rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 flex items-center disabled:cursor-not-allowed"
+            >
+              {isSaving ? (
+                <>
+                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                  Speichere...
+                </>
+              ) : (
+                <>
+                  <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
+                  </svg>
+                  Fragenstapel speichern
+                </>
+              )}
+            </button>
+          </div>
         </div>
 
         {/* Questions List */}
         <div className="bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm rounded-3xl p-8 border-2 border-orange-200/50 dark:border-slate-700/50">
-          {questionStack?.questions.length === 0 ? (
+          {localQuestions.length === 0 ? (
             <div className="text-center py-16">
               <div className="w-20 h-20 bg-gradient-to-br from-orange-400 to-orange-500 rounded-2xl flex items-center justify-center mx-auto mb-6">
                 <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -216,9 +315,9 @@ export default function QuestionStackEditorPage() {
           ) : (
             <div className="space-y-6">
               <h2 className="text-2xl font-semibold text-slate-900 dark:text-white mb-6">
-                Fragen ({questionStack?.questions.length || 0})
+                Fragen ({localQuestions.length})
               </h2>
-              {questionStack?.questions.map((question, index) => (
+              {localQuestions.map((question, index) => (
                 <div
                   key={question.id}
                   draggable
@@ -239,12 +338,44 @@ export default function QuestionStackEditorPage() {
                     <div className="flex space-x-2">
                       <button
                         onClick={() => {
-                          setEditingQuestion(question)
-                          setQuestionText(question.question)
-                          setAnswers(JSON.parse(question.answers))
-                          setCorrectAnswer(question.correctAnswer)
-                          setQuestionType(question.questionType as 'single' | 'multiple')
-                          setShowQuestionForm(true)
+      setEditingQuestion(question)
+      setQuestionText(question.question)
+      
+      // Robuste Behandlung der answers
+      let answersArray = []
+      try {
+        if (typeof question.answers === 'string') {
+          // Versuche JSON zu parsen
+          answersArray = JSON.parse(question.answers)
+        } else if (Array.isArray(question.answers)) {
+          answersArray = question.answers
+        } else {
+          // Fallback: Komma-getrennte Strings
+          answersArray = question.answers.split(',').map(a => a.trim())
+        }
+      } catch (error) {
+        console.error('Error parsing answers:', error, question.answers)
+        // Fallback: Komma-getrennte Strings
+        answersArray = question.answers.split(',').map(a => a.trim())
+      }
+      
+      // Robuste Behandlung der correctAnswers
+      let correctAnswersArray = []
+      try {
+        if (typeof question.correctAnswers === 'string') {
+          correctAnswersArray = JSON.parse(question.correctAnswers)
+        } else if (Array.isArray(question.correctAnswers)) {
+          correctAnswersArray = question.correctAnswers
+        }
+      } catch (error) {
+        console.error('Error parsing correctAnswers:', error, question.correctAnswers)
+        correctAnswersArray = []
+      }
+      
+      setAnswers(answersArray)
+      setCorrectAnswers(correctAnswersArray)
+      setQuestionType(question.questionType as 'single' | 'multiple')
+      setShowQuestionForm(true)
                         }}
                         className="p-2 bg-blue-50/60 dark:bg-blue-900/20 hover:bg-blue-100/80 dark:hover:bg-blue-800/30 rounded-lg border border-blue-200/50 dark:border-blue-700/50 transition-all duration-200 text-blue-600 dark:text-blue-400"
                       >
@@ -252,7 +383,10 @@ export default function QuestionStackEditorPage() {
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                         </svg>
                       </button>
-                      <button className="p-2 bg-red-50/60 dark:bg-red-900/20 hover:bg-red-100/80 dark:hover:bg-red-800/30 rounded-lg border border-red-200/50 dark:border-red-700/50 transition-all duration-200 text-red-600 dark:text-red-400">
+                      <button 
+                        onClick={() => handleDeleteQuestion(question.id)}
+                        className="p-2 bg-red-50/60 dark:bg-red-900/20 hover:bg-red-100/80 dark:hover:bg-red-800/30 rounded-lg border border-red-200/50 dark:border-red-700/50 transition-all duration-200 text-red-600 dark:text-red-400"
+                      >
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                         </svg>
@@ -264,19 +398,55 @@ export default function QuestionStackEditorPage() {
                     <div className="text-sm font-medium text-slate-600 dark:text-slate-400 mb-2">
                       Antwortmöglichkeiten:
                     </div>
-                    {JSON.parse(question.answers).map((answer: string, answerIndex: number) => (
-                      <div key={answerIndex} className="flex items-center space-x-3">
-                        <div className={`w-5 h-5 border-2 border-orange-400 bg-white dark:bg-slate-700 ${
-                          question.questionType === 'multiple' ? 'rounded' : 'rounded-full'
-                        }`}></div>
-                        <span className={`text-sm ${answer === question.correctAnswer ? 'font-semibold text-green-600 dark:text-green-400' : 'text-slate-600 dark:text-slate-400'}`}>
-                          {answer}
-                          {answer === question.correctAnswer && (
-                            <span className="ml-2 text-green-600 dark:text-green-400">✓</span>
-                          )}
-                        </span>
-                      </div>
-                    ))}
+                    {(() => {
+                      // Robuste Behandlung der answers
+                      let answersArray = []
+                      try {
+                        if (typeof question.answers === 'string') {
+                          // Versuche JSON zu parsen
+                          answersArray = JSON.parse(question.answers)
+                        } else if (Array.isArray(question.answers)) {
+                          answersArray = question.answers
+                        } else {
+                          // Fallback: Komma-getrennte Strings
+                          answersArray = question.answers.split(',').map(a => a.trim())
+                        }
+                      } catch (error) {
+                        console.error('Error parsing answers:', error, question.answers)
+                        // Fallback: Komma-getrennte Strings
+                        answersArray = question.answers.split(',').map(a => a.trim())
+                      }
+                      
+                      return answersArray.map((answer: string, answerIndex: number) => {
+                        // Robuste Behandlung der correctAnswers
+                        let correctAnswersArray = []
+                        try {
+                          if (typeof question.correctAnswers === 'string') {
+                            correctAnswersArray = JSON.parse(question.correctAnswers)
+                          } else if (Array.isArray(question.correctAnswers)) {
+                            correctAnswersArray = question.correctAnswers
+                          }
+                        } catch (error) {
+                          console.error('Error parsing correctAnswers:', error, question.correctAnswers)
+                          correctAnswersArray = []
+                        }
+                        
+                        const isCorrect = correctAnswersArray.includes(answer)
+                      return (
+                        <div key={answerIndex} className="flex items-center space-x-3">
+                          <div className={`w-5 h-5 border-2 border-orange-400 bg-white dark:bg-slate-700 ${
+                            question.questionType === 'multiple' ? 'rounded' : 'rounded-full'
+                          }`}></div>
+                          <span className={`text-sm ${isCorrect ? 'font-semibold text-green-600 dark:text-green-400' : 'text-slate-600 dark:text-slate-400'}`}>
+                            {answer}
+                            {isCorrect && (
+                              <span className="ml-2 text-green-600 dark:text-green-400">✓</span>
+                            )}
+                          </span>
+                        </div>
+                      )
+                    })
+                    })()}
                   </div>
                 </div>
               ))}
@@ -383,27 +553,42 @@ export default function QuestionStackEditorPage() {
                 {/* Correct Answer */}
                 <div>
                   <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-                    Richtige Antwort
+                    {translations?.admin.questions.questionForm.correctAnswer || 'Richtige Antwort(en)'}
                   </label>
-                  <select
-                    value={correctAnswer}
-                    onChange={(e) => setCorrectAnswer(e.target.value)}
-                    className="w-full px-4 py-3 bg-white/80 dark:bg-slate-700/80 border-2 border-green-200/50 dark:border-green-600/50 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500/50 transition-all duration-200"
-                  >
-                    <option value="">Wähle die richtige Antwort...</option>
-                    {answers.filter(a => a.trim()).map((answer, index) => (
-                      <option key={index} value={answer}>
-                        {answer}
-                      </option>
-                    ))}
-                  </select>
+                  <div className="space-y-2">
+                    {answers.filter(a => a.trim()).map((answer, index) => {
+                      const isSelected = correctAnswers.includes(answer)
+                      return (
+                        <div key={index} className="flex items-center space-x-3">
+                          <input
+                            type={questionType === 'single' ? 'radio' : 'checkbox'}
+                            name={questionType === 'single' ? 'correctAnswer' : `correctAnswer-${index}`}
+                            checked={isSelected}
+                            onChange={() => {
+                              if (questionType === 'single') {
+                                setCorrectAnswers([answer])
+                              } else {
+                                if (isSelected) {
+                                  setCorrectAnswers(prev => prev.filter(a => a !== answer))
+                                } else {
+                                  setCorrectAnswers(prev => [...prev, answer])
+                                }
+                              }
+                            }}
+                            className="w-4 h-4 text-green-600 bg-white border-2 border-green-300 rounded focus:ring-green-500 dark:focus:ring-green-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-green-600"
+                          />
+                          <span className="text-sm text-slate-700 dark:text-slate-300">{answer}</span>
+                        </div>
+                      )
+                    })}
+                  </div>
                 </div>
 
                 {/* Actions */}
                 <div className="flex space-x-4 pt-4">
                   <button
                     onClick={handleSaveQuestion}
-                    disabled={!questionText.trim() || !answers.some(a => a.trim()) || !correctAnswer.trim()}
+                    disabled={!questionText.trim() || !answers.some(a => a.trim()) || correctAnswers.length === 0}
                     className="flex-1 px-6 py-3 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 disabled:from-gray-400 disabled:to-gray-500 text-white font-semibold rounded-xl transition-all duration-200"
                   >
                     {editingQuestion ? 'Aktualisieren' : 'Speichern'}
@@ -414,7 +599,7 @@ export default function QuestionStackEditorPage() {
                       setEditingQuestion(null)
                       setQuestionText('')
                       setAnswers(['', ''])
-                      setCorrectAnswer('')
+                      setCorrectAnswers([])
                       setQuestionType('single')
                     }}
                     className="flex-1 px-6 py-3 bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white font-semibold rounded-xl transition-all duration-200"

@@ -9,7 +9,7 @@ export default function LoginPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   const router = useRouter()
-  const { translations } = useApp()
+  const { translations, language } = useApp()
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -36,7 +36,7 @@ export default function LoginPage() {
       const response = await fetch('/api/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email, password, language }),
         credentials: 'include'
       })
       if (response.ok) {
@@ -94,3 +94,4 @@ export default function LoginPage() {
     </div>
   )
 }
+

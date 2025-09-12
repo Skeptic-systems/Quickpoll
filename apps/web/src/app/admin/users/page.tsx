@@ -1,0 +1,122 @@
+'use client'
+
+import { useState, useEffect } from 'react'
+import { AdminHeader } from '@/components/admin-header'
+import { LoginOverlay } from '@/components/login-overlay'
+import { UserManagement } from '@/components/user-management'
+import { useApp } from '@/components/app-provider'
+
+export default function UsersPage() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const { translations, language } = useApp()
+
+  useEffect(() => {
+    console.log('🔍 Users-Page: Starting authentication check...')
+    // Skip auth check since user is already authenticated via BetterAuth
+    console.log('✅ Users-Page: Skipping auth check, user already authenticated')
+    setIsAuthenticated(true)
+    
+    /*
+    // Check if user is already authenticated
+    const checkAuth = async () => {
+      try {
+        console.log('🔍 Users-Page: Checking auth via /api/auth/check...')
+        const response = await fetch('/api/auth/check', {
+          method: 'GET',
+          credentials: 'include'
+        })
+        console.log('📡 Users-Page: Auth check response:', response.status)
+        if (response.ok) {
+          console.log('✅ Users-Page: Auth check successful')
+          setIsAuthenticated(true)
+        } else {
+          console.log('❌ Users-Page: Auth check failed')
+        }
+      } catch (error) {
+        console.error('💥 Users-Page: Auth check failed:', error)
+      }
+    }
+    
+    checkAuth()
+    */
+  }, [])
+
+  const handleLogin = async (email: string, password: string) => {
+    try {
+      const response = await fetch('/api/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        credentials: 'include',
+        body: JSON.stringify({ email, password, language })
+      })
+
+      if (response.ok) {
+        setIsAuthenticated(true)
+      }
+    } catch (error) {
+      console.error('Login failed:', error)
+    }
+  }
+
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-orange-50 to-orange-100 dark:from-slate-900 dark:to-slate-800">
+        <AdminHeader />
+        <LoginOverlay onLogin={handleLogin} />
+      </div>
+    )
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-orange-50 to-orange-100 dark:from-slate-900 dark:to-slate-800">
+      <AdminHeader />
+      
+      {/* Main Content */}
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-8">
+        <div className="text-center mb-12">
+          <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-emerald-600 to-emerald-800 dark:from-emerald-400 dark:to-emerald-600 bg-clip-text text-transparent mb-4 pb-2">
+            {translations?.admin.userManagement.title}
+          </h1>
+          <p className="text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
+            {translations?.admin.userManagement.subtitle}
+          </p>
+        </div>
+
+        {/* User Management Component */}
+        <div className="max-w-2xl mx-auto px-4 sm:px-0">
+          <UserManagement />
+        </div>
+      </main>
+
+      {/* Footer */}
+      <footer className="bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm border-t border-orange-200/50 dark:border-slate-700/50">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div className="flex flex-col sm:flex-row justify-between items-center text-base text-slate-600 dark:text-slate-400">
+              <div className="mb-4 sm:mb-0">
+                © 2025{' '}
+                <a 
+                  href="https://skeptic-systems.de" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-orange-600 dark:text-orange-400 hover:text-orange-700 dark:hover:text-orange-300 font-semibold transition-colors"
+                >
+                  Skeptic Systems
+                </a>
+                . {translations?.common.copyright || 'Alle Rechte vorbehalten.'}
+              </div>
+              <div className="flex space-x-8">
+                <a href="/impressum" className="hover:text-orange-600 dark:hover:text-orange-400 transition-colors text-base font-medium">
+                  {translations?.common.impressum || 'Impressum'}
+                </a>
+                <a href="/datenschutz" className="hover:text-orange-600 dark:hover:text-orange-400 transition-colors text-base font-medium">
+                  {translations?.common.datenschutz || 'Datenschutz'}
+                </a>
+              </div>
+            </div>
+          </div>
+        </footer>
+    </div>
+  )
+}

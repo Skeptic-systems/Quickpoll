@@ -12,6 +12,7 @@ interface Quiz {
   questionsPerRun: number
   allowPublicResult: boolean
   createdAt: string
+  participations: number
   _count: {
     questions: number
     attempts: number
@@ -21,7 +22,13 @@ interface Quiz {
 export default function LandingPage() {
   const [quizzes, setQuizzes] = useState<Quiz[]>([])
   const [isLoading, setIsLoading] = useState(true)
-  const { translations } = useApp()
+  const { translations, language } = useApp()
+
+  // Debug logging
+  console.log('LandingPage - language:', language)
+  console.log('LandingPage - translations:', translations)
+  console.log('LandingPage - translations.home:', translations?.home)
+  console.log('LandingPage - translations.home?.subtitle:', translations?.home?.subtitle)
 
   useEffect(() => {
     const fetchQuizzes = async () => {
@@ -29,7 +36,7 @@ export default function LandingPage() {
         const response = await fetch('/api/quizzes')
         if (response.ok) {
           const data = await response.json()
-          setQuizzes(data.quizzes)
+          setQuizzes(data)
         }
       } catch (error) {
         console.error('Error fetching quizzes:', error)
@@ -68,28 +75,28 @@ export default function LandingPage() {
             {/* Main Title */}
             <h1 className="text-6xl sm:text-7xl lg:text-8xl font-bold mb-6">
               <span className="bg-gradient-to-r from-orange-500 via-orange-600 to-orange-700 dark:from-orange-400 dark:via-orange-500 dark:to-orange-600 bg-clip-text text-transparent">
-                {translations.common.quickpoll}
+                {translations?.common?.quickpoll || "VDMA QuickPoll"}
               </span>
             </h1>
 
             {/* Subtitle */}
             <p className="text-2xl sm:text-3xl lg:text-4xl text-slate-600 dark:text-slate-300 mb-16 font-light max-w-3xl mx-auto leading-relaxed">
-              {translations.landing.subtitle}
+              {translations?.home?.subtitle || "Create and conduct surveys - simple, fast and anonymous"}
             </p>
 
             {/* Quiz Section */}
-            <div className="max-w-4xl mx-auto">
+            <div className="max-w-6xl mx-auto">
               {isLoading ? (
                 <div className="flex justify-center items-center py-8">
                   <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500"></div>
                 </div>
-              ) : quizzes.length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              ) : quizzes && quizzes.length > 0 ? (
+                <div className="flex flex-wrap justify-center gap-6 lg:gap-8">
                   {quizzes.map((quiz) => (
                     <Link
                       key={quiz.id}
                       href={`/q/${quiz.slug}/start`}
-                      className="group bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm rounded-3xl p-8 border-2 border-orange-200/50 dark:border-slate-700/50 hover:shadow-xl transition-all duration-300 hover:-translate-y-2"
+                      className="group bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm rounded-3xl p-6 lg:p-8 border-2 border-orange-200/50 dark:border-slate-700/50 hover:shadow-xl transition-all duration-300 hover:-translate-y-2 w-full sm:w-80 md:w-96 lg:w-80 xl:w-96 max-w-sm flex-shrink-0"
                     >
                       <div className="flex items-center justify-between mb-6">
                         <div className="w-16 h-16 bg-gradient-to-br from-orange-400 to-orange-500 rounded-2xl flex items-center justify-center">
@@ -98,17 +105,17 @@ export default function LandingPage() {
                           </svg>
                         </div>
                         <span className="text-base text-slate-500 dark:text-slate-400 font-medium">
-                          {quiz._count.attempts} {translations.landing.quizSection.participations}
+                          {quiz.participations} {translations?.home?.participations || "Teilnahmen"}
                         </span>
                       </div>
                       <h3 className="text-xl font-semibold text-slate-900 dark:text-white mb-3 group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">
                         {quiz.title}
                       </h3>
                       <p className="text-slate-600 dark:text-slate-400 text-base mb-6">
-                        {quiz._count.questions} {translations.landing.quizSection.questions} • {quiz.questionsPerRun} {translations.landing.quizSection.perRun}
+                        {quiz._count.questions} {translations?.home?.questions || "Fragen"} • {quiz.questionsPerRun} {translations?.home?.perRun || "pro Durchlauf"}
                       </p>
                       <div className="flex items-center text-orange-600 dark:text-orange-400 text-base font-medium group-hover:translate-x-2 transition-transform">
-                        {translations.landing.quizSection.startQuiz}
+                        {translations?.home?.startQuiz || "Quiz starten"}
                         <svg className="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
                         </svg>
@@ -124,16 +131,16 @@ export default function LandingPage() {
                     </svg>
                   </div>
                   <h3 className="text-xl font-semibold text-slate-900 dark:text-white mb-3 text-center">
-                    {translations.landing.quizSection.noQuizzesTitle}
+                    {translations?.home?.noQuizzes?.title || "No quizzes available yet"}
                   </h3>
                   <p className="text-slate-600 dark:text-slate-400 text-base mb-6 text-center">
-                    {translations.landing.quizSection.noQuizzesDescription}
+                    {translations?.home?.noQuizzes?.description || "No quizzes have been created yet. Log in to create and manage quizzes."}
                   </p>
                   <Link
                     href="/login"
                     className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-semibold rounded-xl transition-all duration-200 text-base mx-auto"
                   >
-                    {translations.landing.quizSection.loginButton}
+                    {translations?.home?.noQuizzes?.loginPrompt || "Login to Create"}
                     <svg className="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
                     </svg>
@@ -149,10 +156,10 @@ export default function LandingPage() {
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-20">
               <h2 className="text-4xl sm:text-5xl font-bold text-slate-900 dark:text-white mb-6">
-                {translations.landing.whyQuickpoll}
+                {translations?.home?.whyQuickpoll || "Warum Quickpoll?"}
               </h2>
               <p className="text-xl text-slate-600 dark:text-slate-300 max-w-3xl mx-auto">
-                {translations.landing.whyQuickpollSubtitle}
+                {translations?.home?.whyQuickpollSubtitle || "Die einfachste Art, Umfragen zu erstellen und durchzuführen"}
               </p>
             </div>
 
@@ -164,24 +171,24 @@ export default function LandingPage() {
                   </svg>
                 </div>
                 <h3 className="text-2xl font-semibold text-slate-900 dark:text-white mb-4">
-                  {translations.landing.features.anonymous.title}
+                  {translations?.features?.anonymous?.title || "Anonymous participation"}
                 </h3>
                 <p className="text-slate-600 dark:text-slate-400 text-lg leading-relaxed">
-                  {translations.landing.features.anonymous.description}
+                  {translations?.features?.anonymous?.description || "Participants can vote anonymously without registration"}
                 </p>
               </div>
 
               <div className="bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm rounded-3xl p-10 border-2 border-green-200/50 dark:border-green-700/50 hover:shadow-xl transition-all duration-300 hover:-translate-y-2">
                 <div className="w-16 h-16 bg-gradient-to-br from-green-400 to-green-500 rounded-2xl flex items-center justify-center mb-8">
                   <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
                   </svg>
                 </div>
                 <h3 className="text-2xl font-semibold text-slate-900 dark:text-white mb-4">
-                  {translations.common.poweredBy}
+                  {translations?.common?.poweredBy || "Powered by AI"}
                 </h3>
                 <p className="text-slate-600 dark:text-slate-400 text-lg leading-relaxed">
-                  {translations.common.poweredByDescription}
+                  {translations?.common?.poweredByDescription || "Intelligent surveys with AI support for optimal results"}
                 </p>
               </div>
 
@@ -192,10 +199,10 @@ export default function LandingPage() {
                   </svg>
                 </div>
                 <h3 className="text-2xl font-semibold text-slate-900 dark:text-white mb-4">
-                  {translations.landing.features.qrStart.title}
+                  {translations?.features?.qrStart?.title || "QR Start"}
                 </h3>
                 <p className="text-slate-600 dark:text-slate-400 text-lg leading-relaxed">
-                  {translations.landing.features.qrStart.description}
+                  {translations?.features?.qrStart?.description || "Easy access via QR code. Perfect for events and presentations."}
                 </p>
               </div>
             </div>
@@ -216,21 +223,21 @@ export default function LandingPage() {
                   >
                     Skeptic Systems
                   </a>
-                  . Alle Rechte vorbehalten.
+                  . {language === 'de' ? 'Alle Rechte vorbehalten.' : language === 'en' ? 'All rights reserved.' : 'Tous droits réservés.'}
                 </div>
                 <div className="flex items-center space-x-8">
                   <div className="flex items-center space-x-2 text-sm text-slate-500 dark:text-slate-500">
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
                     </svg>
-                    <span>{translations.common.poweredBy}</span>
+                    <span>{translations?.common?.poweredBy || "Powered by AI"}</span>
                   </div>
                   <div className="flex space-x-8">
                     <a href="/impressum" className="hover:text-orange-600 dark:hover:text-orange-400 transition-colors text-base font-medium">
-                      {translations.common.impressum}
+                      {translations?.common?.impressum || "Impressum"}
                     </a>
                     <a href="/datenschutz" className="hover:text-orange-600 dark:hover:text-orange-400 transition-colors text-base font-medium">
-                      {translations.common.datenschutz}
+                      {translations?.common?.datenschutz || "Datenschutz"}
                     </a>
                   </div>
                 </div>

@@ -81,13 +81,29 @@ model Quiz {
   questionsPerRun   Int      @default(15)
   allowPublicResult Boolean  @default(true)
   branding          Json?    // logo url, colors, etc.
+  participations    Int      @default(0) // Anzahl der Teilnahmen
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
   
+  modules   QuizModule[]
   questions Question[]
   attempts  Attempt[]
 
   @@map("quizzes")
+}
+
+model QuizModule {
+  id        String   @id @default(cuid())
+  quizId    String
+  type      String   // "question" | "text" | "title" | "randomQuestion" | "pageBreak"
+  order     Int      @default(0)
+  data      Json     // Module-specific data as JSON
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  quiz Quiz @relation(fields: [quizId], references: [id], onDelete: Cascade)
+
+  @@map("quiz_modules")
 }
 
 model Question {
@@ -127,6 +143,10 @@ model Attempt {
   startedAt     DateTime @default(now())
   finishedAt    DateTime?
   clientHint    String?  // UA/IP hash or browser token (anonym)
+  // New fields for statistics
+  totalQuestions Int     @default(0)
+  correctAnswers Int     @default(0)
+  score          Float   @default(0.0) // Percentage score
   
   Quiz    Quiz     @relation(fields: [quizId], references: [id], onDelete: Cascade)
   answers Answer[]
@@ -137,9 +157,13 @@ model Attempt {
 model Answer {
   id         String   @id @default(cuid())
   attemptId  String
-  questionId String
+  moduleId   String   // Changed from questionId to moduleId to support QuizModule system
   // store selected choice ids (supports multi):
-  choiceIds  String   // JSON stringified string[]
+  choiceIds  String?  // JSON stringified string[] - made optional for backward compatibility
+  // New fields for evaluation
+  isCorrect  Boolean  @default(false)
+  correctChoices String // JSON stringified string[] - the correct answer choices
+  selectedChoices String // JSON stringified string[] - what user actually selected
   createdAt  DateTime @default(now())
   
   Attempt Attempt @relation(fields: [attemptId], references: [id], onDelete: Cascade)
