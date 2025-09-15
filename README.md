@@ -117,7 +117,6 @@ This monorepo includes the following packages/apps:
 - `database`: [Mariadb](https://mariadb.org/) as database
 - `phpmyadmin`: [Phpmyadmin](https://www.phpmyadmin.net/) as database management
 - `deepl`: [Deepl](https://www.deepl.com/) used for dynamic translation in Quis modules
-- `typescript`: [Next JS](https://nextjs.org/) used typeskript framework
 
 ## Getting Started
 
