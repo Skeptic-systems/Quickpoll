@@ -93,7 +93,7 @@
 
 ![Lightmode](./apps/web/public/mock8.png)
 
-
+</details>
 
 ## Usage
 
