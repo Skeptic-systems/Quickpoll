@@ -1,0 +1,14 @@
+<!-- Quickpoll icon (themed via CSS currentColor), no background -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-labelledby="title" fill="none" class="quickpoll-icon">
+  <title id="title">Quickpoll icon</title>
+  <style>
+    /* Default colors (light) */
+    .quickpoll-icon { color:#12487A; --qp-accent:#F28B00; }
+    @media (prefers-color-scheme: dark) {
+      .quickpoll-icon { color:#D6E4F0; --qp-accent:#FFB24D; } /* tweak for dark */
+    }
+  </style>
+  <circle cx="128" cy="128" r="84" stroke="currentColor" stroke-width="24" stroke-linecap="round" stroke-linejoin="round"></circle>
+  <line x1="176" y1="176" x2="214" y2="214" stroke="currentColor" stroke-width="24" stroke-linecap="round" stroke-linejoin="round"></line>
+  <path d="M96 132 L120 156 L176 100" stroke="var(--qp-accent)" stroke-width="24" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>

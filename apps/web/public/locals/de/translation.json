@@ -1,0 +1,373 @@
+{
+  "common": {
+    "quickpoll": "VDMA QuickPoll",
+    "login": "Anmelden",
+    "copyright": "© 2025 Skeptic Systems. Alle Rechte vorbehalten.",
+    "poweredBy": "Unterstützt von KI",
+    "poweredByDescription": "Intelligente Umfragen mit KI-Unterstützung für optimale Ergebnisse",
+    "impressum": "Impressum",
+    "datenschutz": "Datenschutz"
+  },
+  "home": {
+    "title": "Mobile-optimierte Quiz-Webapp für Events und Umfragen",
+    "subtitle": "Erstelle und führe Umfragen durch - einfach, schnell und anonym",
+    "whyQuickpoll": "Warum Quickpoll?",
+    "whyQuickpollSubtitle": "Die einfachste Art, Umfragen zu erstellen und durchzuführen",
+    "activeQuizzes": "Aktive",
+    "selectQuiz": "Wählen Sie ein Quiz aus und starten Sie sofort",
+    "participations": "Teilnahmen",
+    "questions": "Fragen",
+    "perRun": "pro Durchlauf",
+    "startQuiz": "Quiz starten",
+    "noQuizzes": {
+      "title": "Noch keine Quizzes verfügbar",
+      "description": "Melde dich an, um Quizzes zu erstellen und Umfragen durchzuführen.",
+      "loginPrompt": "Jetzt anmelden"
+    }
+  },
+  "features": {
+    "anonymous": {
+      "title": "Anonyme Teilnahme",
+      "description": "Teilnehmer können anonym abstimmen ohne Registrierung"
+    },
+    "oneQuestion": {
+      "title": "Eine Frage pro Durchlauf",
+      "description": "Fokussierte Umfragen mit einer zentralen Frage"
+    },
+    "qrStart": {
+      "title": "QR-Code Start",
+      "description": "Einfacher Start über QR-Code für schnelle Teilnahme"
+    }
+  },
+  "datenschutz": {
+    "title": "Privacy Policy",
+    "lastUpdated": "Last updated: January 2025",
+    "intro": "The protection of your personal data is important to us. This privacy policy informs you about the nature, scope and purpose of the processing of personal data by our QuickPoll application.",
+    "dataController": {
+      "title": "Data Controller",
+      "content": "The data controller is Skeptic Systems. For questions about data protection, you can contact us via email."
+    },
+    "dataProcessing": {
+      "title": "Data Processing",
+      "content": "QuickPoll processes data exclusively for conducting surveys and quizzes. No personal data is stored unless you explicitly provide it."
+    },
+    "cookies": {
+      "title": "Cookies",
+      "content": "We use technically necessary cookies for the functionality of the application. These cannot be disabled."
+    },
+    "rights": {
+      "title": "Your Rights",
+      "content": "You have the right to information, correction, deletion and objection regarding your personal data."
+    }
+  },
+  "impressum": {
+    "title": "Imprint",
+    "provider": {
+      "title": "Provider",
+      "name": "Skeptic Systems",
+      "address": "Sample Street 123",
+      "city": "12345 Sample City",
+      "country": "Germany"
+    },
+    "contact": {
+      "title": "Contact",
+      "email": "Email: info@skeptic-systems.de",
+      "phone": "Phone: +49 (0) 123 456789"
+    },
+    "responsible": {
+      "title": "Responsible for Content",
+      "name": "Max Mustermann",
+      "address": "Sample Street 123",
+      "city": "12345 Sample City"
+    },
+    "disclaimer": {
+      "title": "Disclaimer",
+      "content": "The contents of our pages have been created with the greatest care. However, we cannot guarantee the accuracy, completeness and timeliness of the content."
+    }
+  },
+  "admin": {
+    "title": "Admin Dashboard",
+    "subtitle": "Verwalte deine Quizzes und Umfragen",
+    "features": {
+      "createQuiz": {
+        "title": "Quiz erstellen",
+        "description": "Erstelle neue Quizzes mit Fragen und Antwortmöglichkeiten für deine Events."
+      },
+      "manageQuestions": {
+        "title": "Fragen erstellen",
+        "description": "Erstelle Fragenstapel mit Fragen und Antworten für deine Quizzes."
+      },
+      "viewResults": {
+        "title": "Ergebnisse anzeigen",
+        "description": "Analysiere die Ergebnisse und Statistiken deiner durchgeführten Quizzes."
+      }
+    },
+    "quizList": {
+      "title": "Meine Quizzes",
+      "createNew": "Neues Quiz erstellen",
+      "noQuizzes": {
+        "title": "Noch keine Quizzes erstellt",
+        "description": "Erstelle dein erstes Quiz, um loszulegen und Umfragen durchzuführen.",
+        "createFirst": "Erstes Quiz erstellen →"
+      },
+      "actions": {
+        "edit": "Bearbeiten",
+        "results": "Ergebnisse"
+      },
+      "status": {
+        "active": "Aktiv",
+        "inactive": "Inaktiv"
+      }
+    },
+    "quizEditor": {
+      "title": "Quiz-Editor",
+      "quizName": "Quiz-Name eingeben...",
+      "emptyState": {
+        "title": "Quiz-Editor",
+        "description": "Ziehe Module von rechts hierher, um dein Quiz zu erstellen"
+      },
+      "modules": {
+        "title": "Module",
+        "question": {
+          "title": "Frage",
+          "description": "Erstelle eine Frage mit Antworten"
+        },
+        "text": {
+          "title": "Text",
+          "description": "Füge Text hinzu"
+        },
+        "image": {
+          "title": "Bild",
+          "description": "Füge ein Bild hinzu"
+        },
+        "video": {
+          "title": "Video",
+          "description": "Füge ein Video hinzu"
+        },
+        "heading": {
+          "title": "Überschrift",
+          "description": "Füge eine Überschrift hinzu"
+        },
+        "randomQuestion": {
+          "title": "Zufällige Frage",
+          "description": "Frage aus Stapel"
+        },
+        "pageBreak": {
+          "title": "Seitenumbruch",
+          "description": "Seitenende"
+        }
+      },
+      "actions": {
+        "save": "Speichern",
+        "addAnswer": "Antwort hinzufügen"
+      },
+      "placeholders": {
+        "question": "Frage eingeben...",
+        "answer": "Antwort",
+        "text": "Text eingeben...",
+        "imageUrl": "Bild-URL eingeben...",
+        "altText": "Alt-Text eingeben...",
+        "videoUrl": "Video-URL eingeben...",
+        "videoTitle": "Video-Titel eingeben...",
+        "heading": "Überschrift eingeben...",
+        "description": "Beschreibung eingeben...",
+        "selectStack": "Fragenstapel auswählen...",
+        "noStacksAvailable": "Keine Fragenstapel verfügbar"
+      },
+      "options": {
+        "multipleChoice": "Mehrfachauswahl erlauben",
+        "headingSize": "Größe:",
+        "h1": "H1 (Groß)",
+        "h2": "H2 (Mittel)",
+        "h3": "H3 (Klein)"
+      }
+    },
+    "login": {
+      "title": "Anmelden",
+      "subtitle": "Melde dich an, um auf das Admin-Panel zuzugreifen",
+      "email": "E-Mail",
+      "password": "Passwort",
+      "emailPlaceholder": "deine@email.com",
+      "passwordPlaceholder": "••••••••",
+      "submit": "Anmelden",
+      "loading": "Wird geladen...",
+      "error": "Ungültige Anmeldedaten"
+    },
+    "accountSettings": {
+      "title": "Account-Einstellungen",
+      "subtitle": "Verwalten Sie Ihre persönlichen Daten",
+      "name": "Name",
+      "email": "E-Mail",
+      "currentPassword": "Aktuelles Passwort",
+      "newPassword": "Neues Passwort",
+      "confirmPassword": "Passwort bestätigen",
+      "updateButton": "Aktualisieren",
+      "success": "Account erfolgreich aktualisiert",
+      "error": "Fehler beim Aktualisieren des Accounts",
+      "passwordMismatch": "Passwörter stimmen nicht überein",
+      "invalidCurrentPassword": "Aktuelles Passwort ist falsch"
+    },
+    "userManagement": {
+      "title": "Benutzerverwaltung",
+      "subtitle": "Erstellen und verwalten Sie Benutzer",
+      "createUser": "Neuen Benutzer erstellen",
+      "name": "Name",
+      "email": "E-Mail",
+      "password": "Passwort",
+      "confirmPassword": "Passwort bestätigen",
+      "role": "Rolle",
+      "admin": "Administrator",
+      "user": "Benutzer",
+      "createButton": "Benutzer erstellen",
+      "success": "Benutzer erfolgreich erstellt",
+      "error": "Fehler beim Erstellen des Benutzers",
+      "emailExists": "E-Mail-Adresse bereits vorhanden",
+      "passwordMismatch": "Passwörter stimmen nicht überein"
+    },
+    "header": {
+      "backToHome": "Zurück zur Startseite",
+      "backToDashboard": "Zurück zum Admin-Dashboard",
+      "logout": "Logout"
+    },
+    "quizStart": {
+      "title": "Quiz starten",
+      "subtitle": "Bereit für das Quiz? Hier geht's los!",
+      "quizLabel": "Quiz:",
+      "description": "Teste dein Wissen mit diesem spannenden Quiz!",
+      "instructions": {
+        "title": "Anweisungen:",
+        "items": [
+          "Beantworte alle Fragen sorgfältig",
+          "Du kannst jederzeit zwischen den Fragen wechseln",
+          "Überprüfe deine Antworten vor dem Absenden",
+          "Viel Erfolg!"
+        ]
+      },
+      "startButton": "Quiz starten",
+      "starting": "Wird gestartet...",
+      "backToHome": "Zurück zur Startseite"
+    },
+    "quizExecution": {
+      "pageCounter": "Seite {current} von {total}",
+      "backButton": "Zurück",
+      "nextButton": "Weiter",
+      "submitButton": "Abgeben",
+      "congratulations": "Glückwunsch!",
+      "quizCompleted": "Quiz erfolgreich abgeschlossen!",
+      "backToHome": "Zurück zur Startseite",
+      "notFound": {
+        "title": "Quiz nicht gefunden",
+        "description": "Das angeforderte Quiz konnte nicht gefunden werden.",
+        "backToHome": "Zurück zur Startseite"
+      }
+    },
+    "questions": {
+      "title": "Fragenstapel verwalten",
+      "createNew": "Neuen Fragenstapel erstellen",
+      "createStack": "Neuen Fragenstapel erstellen",
+      "stackName": "Name des Fragenstapels",
+      "stackNamePlaceholder": "z.B. Allgemeinwissen, Mathematik...",
+      "create": "Erstellen",
+      "cancel": "Abbrechen",
+      "noStacks": {
+        "title": "Noch keine Fragenstapel erstellt",
+        "description": "Erstelle deinen ersten Fragenstapel, um Fragen und Antworten für deine Quizzes zu sammeln.",
+        "createFirst": "Ersten Fragenstapel erstellen →"
+      },
+      "myStacks": "Meine Fragenstapel",
+      "questions": "Fragen",
+      "edit": "Bearbeiten",
+      "delete": "Löschen",
+      "backToStacks": "Zurück zu Fragenstapeln",
+      "editStack": "Fragenstapel bearbeiten",
+      "addQuestion": "Neue Frage hinzufügen",
+      "noQuestions": {
+        "title": "Noch keine Fragen erstellt",
+        "description": "Füge deine erste Frage zu diesem Fragenstapel hinzu.",
+        "addFirst": "Erste Frage hinzufügen →"
+      },
+      "questionForm": {
+        "title": "Neue Frage hinzufügen",
+        "editTitle": "Frage bearbeiten",
+        "question": "Frage",
+        "questionPlaceholder": "Formuliere deine Frage...",
+        "questionType": "Fragetyp",
+        "singleChoice": "Einfachauswahl",
+        "multipleChoice": "Mehrfachauswahl",
+        "answers": "Antwortmöglichkeiten",
+        "addAnswer": "Antwort hinzufügen",
+        "answerPlaceholder": "Antwort",
+        "correctAnswer": "Richtige Antwort",
+        "correctAnswerPlaceholder": "Wähle die richtige Antwort...",
+        "save": "Speichern",
+        "update": "Aktualisieren",
+        "cancel": "Abbrechen"
+      },
+      "deleteConfirm": {
+        "title": "Fragenstapel löschen",
+        "message": "Bist du sicher, dass du diesen Fragenstapel löschen möchtest? Diese Aktion kann nicht rückgängig gemacht werden.",
+        "confirm": "Löschen",
+        "cancel": "Abbrechen"
+      }
+    },
+    "quizEditor": {
+      "quizName": "Quiz-Name",
+      "modules": {
+        "title": "Module",
+        "question": {
+          "title": "Frage",
+          "description": "Erstelle eine Frage mit Antworten"
+        },
+        "text": {
+          "title": "Text",
+          "description": "Füge Text hinzu"
+        },
+        "heading": {
+          "title": "Überschrift",
+          "description": "Füge eine Überschrift hinzu"
+        },
+        "randomQuestion": {
+          "title": "Zufällige Frage",
+          "description": "Wähle eine zufällige Frage aus einem Fragenstapel"
+        },
+        "pageBreak": {
+          "title": "Seitenumbruch",
+          "description": "Markiert das Ende einer Quiz-Seite"
+        }
+      },
+      "placeholders": {
+        "question": "Frage eingeben...",
+        "answer": "Antwort",
+        "text": "Text eingeben...",
+        "heading": "Überschrift eingeben...",
+        "description": "Beschreibung eingeben...",
+        "selectStack": "Fragenstapel auswählen..."
+      },
+      "options": {
+        "multipleChoice": "Mehrfachauswahl erlauben",
+        "headingSize": "Größe:",
+        "h1": "H1 (Groß)",
+        "h2": "H2 (Mittel)",
+        "h3": "H3 (Klein)"
+      },
+      "actions": {
+        "addAnswer": "Antwort hinzufügen",
+        "save": "Speichern"
+      },
+      "emptyState": {
+        "title": "Quiz-Editor",
+        "description": "Ziehe Module von rechts hierher, um dein Quiz zu erstellen"
+      },
+      "qrCode": {
+        "showQR": "QR-Code anzeigen",
+        "titleNew": "Quiz erfolgreich erstellt!",
+        "titleExisting": "QR-Code für Quiz",
+        "description": "Hier ist der QR-Code für Ihr Quiz:",
+        "urlLabel": "Quiz-URL:",
+        "copyUrl": "URL kopieren",
+        "downloadPng": "PNG Download",
+        "close": "Schließen"
+      }
+    }
+  }
+}

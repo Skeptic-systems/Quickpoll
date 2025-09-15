@@ -79,7 +79,6 @@ dist
 
 # Gatsby files
 .cache/
-public
 
 # Storybook build outputs
 .out
@@ -101,14 +100,10 @@ db_data/
 *.sql
 
 # Docker
-.dockerignore
 
 # IDE files
 .vscode/
-.idea/
-*.swp
-*.swo
-*~
+.cursor/
 
 # OS generated files
 .DS_Store
@@ -142,10 +137,6 @@ secrets/
 *.bak
 *.backup
 *.old
-
-# Local development files
-.local/
-local/
 
 # Package manager lock files (optional - uncomment if you want to ignore them)
 # package-lock.json

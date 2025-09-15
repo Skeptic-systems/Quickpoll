@@ -1,0 +1,324 @@
+{
+  "common": {
+    "quickpoll": "VDMA QuickPoll",
+    "login": "Connexion",
+    "copyright": "© 2025 Skeptic Systems. Tous droits réservés.",
+    "poweredBy": "Alimenté par l'IA",
+    "poweredByDescription": "Sondages intelligents avec support IA pour des résultats optimaux",
+    "impressum": "Mentions légales",
+    "datenschutz": "Protection des données"
+  },
+  "home": {
+    "title": "Application web de quiz optimisée mobile pour événements et sondages",
+    "subtitle": "Créez et menez des sondages - simple, rapide et anonyme",
+    "whyQuickpoll": "Pourquoi Quickpoll ?",
+    "whyQuickpollSubtitle": "Le moyen le plus simple de créer et mener des sondages",
+    "activeQuizzes": "Actifs",
+    "selectQuiz": "Choisissez un quiz et commencez immédiatement",
+    "participations": "Participations",
+    "questions": "Questions",
+    "perRun": "par exécution",
+    "startQuiz": "Commencer le quiz",
+    "noQuizzes": {
+      "title": "Aucun quiz disponible pour le moment",
+      "description": "Inscrivez-vous pour créer des quiz et mener des sondages.",
+      "loginPrompt": "S'inscrire maintenant"
+    }
+  },
+  "features": {
+    "anonymous": {
+      "title": "Participation anonyme",
+      "description": "Les participants peuvent voter anonymement sans inscription"
+    },
+    "oneQuestion": {
+      "title": "Sondages ciblés",
+      "description": "Avec une question centrale"
+    },
+    "qrStart": {
+      "title": "Démarrage QR",
+      "description": "Démarrage facile via QR code pour une participation rapide"
+    }
+  },
+  "datenschutz": {
+    "title": "Politique de confidentialité",
+    "lastUpdated": "Dernière mise à jour : janvier 2025",
+    "intro": "La protection de vos données personnelles est importante pour nous. Cette politique de confidentialité vous informe sur la nature, la portée et l'objectif du traitement des données personnelles par notre application QuickPoll.",
+    "dataController": {
+      "title": "Responsable du traitement",
+      "content": "Le responsable du traitement est Skeptic Systems. Pour toute question concernant la protection des données, vous pouvez nous contacter par e-mail."
+    },
+    "dataProcessing": {
+      "title": "Traitement des données",
+      "content": "QuickPoll traite les données exclusivement pour la conduite d'enquêtes et de quiz. Aucune donnée personnelle n'est stockée sauf si vous la fournissez explicitement."
+    },
+    "cookies": {
+      "title": "Cookies",
+      "content": "Nous utilisons des cookies techniquement nécessaires pour le fonctionnement de l'application. Ceux-ci ne peuvent pas être désactivés."
+    },
+    "rights": {
+      "title": "Vos droits",
+      "content": "Vous avez le droit à l'information, à la rectification, à la suppression et à l'opposition concernant vos données personnelles."
+    }
+  },
+  "impressum": {
+    "title": "Mentions légales",
+    "provider": {
+      "title": "Fournisseur",
+      "name": "Skeptic Systems",
+      "address": "Rue Exemple 123",
+      "city": "12345 Ville Exemple",
+      "country": "Allemagne"
+    },
+    "contact": {
+      "title": "Contact",
+      "email": "E-mail : info@skeptic-systems.de",
+      "phone": "Téléphone : +49 (0) 123 456789"
+    },
+    "responsible": {
+      "title": "Responsable du contenu",
+      "name": "Max Mustermann",
+      "address": "Rue Exemple 123",
+      "city": "12345 Ville Exemple"
+    },
+    "disclaimer": {
+      "title": "Avertissement",
+      "content": "Le contenu de nos pages a été créé avec le plus grand soin. Cependant, nous ne pouvons garantir l'exactitude, l'exhaustivité et l'actualité du contenu."
+    }
+  },
+  "admin": {
+    "title": "Tableau de bord Admin",
+    "subtitle": "Gérez vos quiz et sondages",
+    "features": {
+      "createQuiz": {
+        "title": "Créer un quiz",
+        "description": "Créez de nouveaux quiz avec des questions et des options de réponse pour vos événements."
+      },
+      "manageQuestions": {
+        "title": "Créer des questions",
+        "description": "Créez des piles de questions avec des questions et réponses pour vos quiz."
+      },
+      "viewResults": {
+        "title": "Voir les résultats",
+        "description": "Analysez les résultats et statistiques de vos quiz menés."
+      }
+    },
+    "quizList": {
+      "title": "Mes Quiz",
+      "createNew": "Créer un nouveau quiz",
+      "noQuizzes": {
+        "title": "Aucun quiz créé pour le moment",
+        "description": "Créez votre premier quiz pour commencer et mener des sondages.",
+        "createFirst": "Créer le premier quiz →"
+      },
+      "actions": {
+        "edit": "Modifier",
+        "results": "Résultats"
+      },
+      "status": {
+        "active": "Actif",
+        "inactive": "Inactif"
+      }
+    },
+    "quizEditor": {
+      "title": "Éditeur de Quiz",
+      "quizName": "Entrez le nom du quiz...",
+      "emptyState": {
+        "title": "Éditeur de Quiz",
+        "description": "Glissez les modules de droite ici pour créer votre quiz"
+      },
+      "modules": {
+        "title": "Modules",
+        "question": {
+          "title": "Question",
+          "description": "Créer une question avec des réponses"
+        },
+        "text": {
+          "title": "Texte",
+          "description": "Ajouter du texte"
+        },
+        "image": {
+          "title": "Image",
+          "description": "Ajouter une image"
+        },
+        "video": {
+          "title": "Vidéo",
+          "description": "Ajouter une vidéo"
+        },
+        "heading": {
+          "title": "Titre",
+          "description": "Ajouter un titre"
+        },
+        "randomQuestion": {
+          "title": "Question Aléatoire",
+          "description": "Question de pile"
+        },
+        "pageBreak": {
+          "title": "Saut de Page",
+          "description": "Fin de page"
+        }
+      },
+      "actions": {
+        "save": "Enregistrer",
+        "addAnswer": "Ajouter une réponse"
+      },
+      "placeholders": {
+        "question": "Entrez la question...",
+        "answer": "Réponse",
+        "text": "Entrez le texte...",
+        "imageUrl": "Entrez l'URL de l'image...",
+        "altText": "Entrez le texte alternatif...",
+        "videoUrl": "Entrez l'URL de la vidéo...",
+        "videoTitle": "Entrez le titre de la vidéo...",
+        "heading": "Entrez le titre...",
+        "description": "Entrez la description...",
+        "selectStack": "Sélectionner une pile de questions...",
+        "noStacksAvailable": "Aucune pile de questions disponible"
+      },
+      "options": {
+        "multipleChoice": "Autoriser le choix multiple",
+        "headingSize": "Taille :",
+        "h1": "H1 (Grand)",
+        "h2": "H2 (Moyen)",
+        "h3": "H3 (Petit)"
+      },
+      "qrCode": {
+        "showQR": "Afficher le QR Code",
+        "titleNew": "Quiz créé avec succès !",
+        "titleExisting": "QR Code pour le Quiz",
+        "description": "Voici le QR code pour votre quiz :",
+        "urlLabel": "URL du Quiz :",
+        "copyUrl": "Copier l'URL",
+        "downloadPng": "Télécharger PNG",
+        "close": "Fermer"
+      }
+    },
+    "login": {
+      "title": "Connexion",
+      "subtitle": "Connectez-vous pour accéder au panneau d'administration",
+      "email": "Email",
+      "password": "Mot de passe",
+      "emailPlaceholder": "votre@email.com",
+      "passwordPlaceholder": "••••••••",
+      "submit": "Connexion",
+      "loading": "Chargement...",
+      "error": "Identifiants de connexion invalides"
+    },
+    "accountSettings": {
+      "title": "Paramètres du Compte",
+      "subtitle": "Gérez vos données personnelles",
+      "name": "Nom",
+      "email": "Email",
+      "currentPassword": "Mot de passe actuel",
+      "newPassword": "Nouveau mot de passe",
+      "confirmPassword": "Confirmer le mot de passe",
+      "updateButton": "Mettre à jour",
+      "success": "Compte mis à jour avec succès",
+      "error": "Erreur lors de la mise à jour du compte",
+      "passwordMismatch": "Les mots de passe ne correspondent pas",
+      "invalidCurrentPassword": "Le mot de passe actuel est incorrect"
+    },
+    "userManagement": {
+      "title": "Gestion des Utilisateurs",
+      "subtitle": "Créer et gérer les utilisateurs",
+      "createUser": "Créer un Nouvel Utilisateur",
+      "name": "Nom",
+      "email": "Email",
+      "password": "Mot de passe",
+      "confirmPassword": "Confirmer le mot de passe",
+      "role": "Rôle",
+      "admin": "Administrateur",
+      "user": "Utilisateur",
+      "createButton": "Créer l'Utilisateur",
+      "success": "Utilisateur créé avec succès",
+      "error": "Erreur lors de la création de l'utilisateur",
+      "emailExists": "L'adresse email existe déjà",
+      "passwordMismatch": "Les mots de passe ne correspondent pas"
+    },
+    "header": {
+      "backToHome": "Retour à l'accueil",
+      "backToDashboard": "Retour au Tableau de Bord Admin",
+      "logout": "Déconnexion"
+    },
+    "quizStart": {
+      "title": "Commencer le Quiz",
+      "subtitle": "Prêt pour le quiz ? C'est parti !",
+      "quizLabel": "Quiz :",
+      "description": "Testez vos connaissances avec ce quiz passionnant !",
+      "instructions": {
+        "title": "Instructions :",
+        "items": [
+          "Répondez à toutes les questions avec soin",
+          "Vous pouvez passer d'une question à l'autre à tout moment",
+          "Vérifiez vos réponses avant de soumettre",
+          "Bonne chance !"
+        ]
+      },
+      "startButton": "Commencer le Quiz",
+      "starting": "Démarrage...",
+      "backToHome": "Retour à l'accueil"
+    },
+    "quizExecution": {
+      "pageCounter": "Page {current} sur {total}",
+      "backButton": "Retour",
+      "nextButton": "Suivant",
+      "submitButton": "Soumettre",
+      "congratulations": "Félicitations !",
+      "quizCompleted": "Quiz terminé avec succès !",
+      "backToHome": "Retour à l'accueil",
+      "notFound": {
+        "title": "Quiz introuvable",
+        "description": "Le quiz demandé n'a pas pu être trouvé.",
+        "backToHome": "Retour à l'accueil"
+      }
+    },
+    "questions": {
+      "title": "Gérer les Piles de Questions",
+      "createNew": "Créer une Nouvelle Pile de Questions",
+      "createStack": "Créer une Nouvelle Pile de Questions",
+      "stackName": "Nom de la Pile de Questions",
+      "stackNamePlaceholder": "ex. Culture Générale, Mathématiques...",
+      "create": "Créer",
+      "cancel": "Annuler",
+      "noStacks": {
+        "title": "Aucune Pile de Questions créée",
+        "description": "Créez votre première pile de questions pour collecter des questions et réponses pour vos quiz.",
+        "createFirst": "Créer la première Pile de Questions →"
+      },
+      "myStacks": "Mes Piles de Questions",
+      "questions": "Questions",
+      "edit": "Modifier",
+      "delete": "Supprimer",
+      "backToStacks": "Retour aux Piles de Questions",
+      "editStack": "Modifier la Pile de Questions",
+      "addQuestion": "Ajouter une Nouvelle Question",
+      "noQuestions": {
+        "title": "Aucune Question créée",
+        "description": "Ajoutez votre première question à cette pile de questions.",
+        "addFirst": "Ajouter la première Question →"
+      },
+      "questionForm": {
+        "title": "Ajouter une Nouvelle Question",
+        "editTitle": "Modifier la Question",
+        "question": "Question",
+        "questionPlaceholder": "Formulez votre question...",
+        "questionType": "Type de Question",
+        "singleChoice": "Choix Unique",
+        "multipleChoice": "Choix Multiple",
+        "answers": "Options de Réponse",
+        "addAnswer": "Ajouter une Réponse",
+        "answerPlaceholder": "Réponse",
+        "correctAnswer": "Bonne Réponse",
+        "correctAnswerPlaceholder": "Sélectionnez la bonne réponse...",
+        "save": "Enregistrer",
+        "update": "Mettre à jour",
+        "cancel": "Annuler"
+      },
+      "deleteConfirm": {
+        "title": "Supprimer la Pile de Questions",
+        "message": "Êtes-vous sûr de vouloir supprimer cette pile de questions ? Cette action ne peut pas être annulée.",
+        "confirm": "Supprimer",
+        "cancel": "Annuler"
+      }
+    }
+  }
+}
