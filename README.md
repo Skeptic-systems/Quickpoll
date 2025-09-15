@@ -7,7 +7,7 @@
 <!-- Project Stats -->
 <div align="center">
 
-[![en](https://img.shields.io/badge/lang-en-red.svg)]
+<!--[![en](https://img.shields.io/badge/lang-en-red.svg)]
 [![de](https://img.shields.io/badge/lang-de-yellow.svg)]
 [![fr](https://img.shields.io/badge/lang-fr-blue.svg)]
 
@@ -15,7 +15,7 @@
 [![Contributors][contributors-status]][contributors-url]
 [![GitHub Release][release-status]][release-url]
 [![GitHub Issues or Pull Requests][issues-status]][issues-url]
-[![License][license-status]][license-url]
+[![License][license-status]][license-url]-->
 
 </div>
 <br />
