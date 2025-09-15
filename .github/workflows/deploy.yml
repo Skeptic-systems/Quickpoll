@@ -36,12 +36,18 @@ jobs:
       
     - name: Generate Prisma client
       run: pnpm db:generate
+      env:
+        BETTER_AUTH_SECRET: "ci-test-secret-key-for-build-only"
+        DATABASE_URL: "mysql://test:test@localhost:3306/test"
       
     - name: Build UI package
       run: pnpm --filter @quickpoll/ui build
       
     - name: Build web application
       run: pnpm build
+      env:
+        BETTER_AUTH_SECRET: "ci-test-secret-key-for-build-only"
+        DATABASE_URL: "mysql://test:test@localhost:3306/test"
       
     - name: Run tests (if available)
       run: |
