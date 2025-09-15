@@ -21,7 +21,7 @@
 <br />
 <div align="center">
   <a href="https://github.com/skeptic-systems/quickpoll">
-    <img src="./apps/web/src-tauri/public/dark-logo.svg" alt="Logo" width="80" height="80">
+    <img src="./apps/web/public/dark-logo.svg" alt="Logo" width="80" height="80">
   </a>
 
   <h3 align="center">Quickpoll</h3>
@@ -37,7 +37,7 @@
     <a href="https://github.com/skeptic-systems/quickpoll/issues/new?labels=enhancement&template=feature-request---.md">Request Feature</a>
   </p>
 
-  <img src="./apps/web/src-tauri/public/mock.png" alt="Quickpoll" width="600">
+  <img src="./apps/web/public/mock.png" alt="Quickpoll" width="600">
 
 </div>
 
@@ -69,29 +69,29 @@
 
 ### Main Application
 
-![Landingpage](./apps/web/src-tauri/public/mock.png)
+![Landingpage](./apps/web/public/mock.png)
 
 ### Admin Interface
 
-![Admin Interface](./apps/web/src-tauri/public/mock2.png)
+![Admin Interface](./apps/web/public/mock2.png)
 
 ### Create a Quiz
 
-![Create a Quiz](./apps/web/src-tauri/public/mock3.png)
+![Create a Quiz](./apps/web/public/mock3.png)
 
-![Create Question Stacks](./apps/web/src-tauri/public/mock4.png)
+![Create Question Stacks](./apps/web/public/mock4.png)
 
-![Implement Question Stacks](./apps/web/src-tauri/public/mock5.png)
+![Implement Question Stacks](./apps/web/public/mock5.png)
 
-![Qr Code Support](./apps/web/src-tauri/public/mock6.png)
+![Qr Code Support](./apps/web/public/mock6.png)
 
 ### Multi Language Support
 
-![Multi Language](./apps/web/src-tauri/public/mock7.png)
+![Multi Language](./apps/web/public/mock7.png)
 
 ### Light and Darkmode
 
-![Lightmode](./apps/web/src-tauri/public/mock8.png)
+![Lightmode](./apps/web/public/mock8.png)
 
 
 
