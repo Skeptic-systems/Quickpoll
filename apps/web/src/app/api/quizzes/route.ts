@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { auth } from '@/lib/auth'
 
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 export async function GET(request: NextRequest) {
   try {
     // For now, skip authentication check to debug the issue
@@ -41,7 +44,7 @@ export async function GET(request: NextRequest) {
     })
 
     console.log('Fetched quizzes:', quizzes)
-    return NextResponse.json(quizzes)
+    return NextResponse.json(quizzes, { headers: { 'Cache-Control': 'no-store' } })
   } catch (error) {
     console.error('Error fetching quizzes:', error)
     return NextResponse.json(

@@ -295,7 +295,7 @@ export default function QuestionsPage() {
 
             <div className="flex space-x-3">
               <button
-                onClick={() => handleDeleteStack(deleteConfirm.stack)}
+                onClick={() => deleteConfirm.stack && handleDeleteStack(deleteConfirm.stack)}
                 className="flex-1 px-4 py-3 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-semibold rounded-xl transition-all duration-200"
               >
                 {translations?.admin.questions.deleteConfirm.confirm || 'Löschen'}

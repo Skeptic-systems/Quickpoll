@@ -6,6 +6,7 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url)
     const stackId = searchParams.get('stackId')
     const count = parseInt(searchParams.get('count') || '1')
+    const language = searchParams.get('language') || 'de' // Default to German
 
     if (!stackId) {
       return NextResponse.json(
@@ -14,7 +15,7 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    console.log(`🔍 Random-Question API: Loading ${count} questions for stack ${stackId}`)
+    console.log(`🔍 Random-Question API: Loading ${count} questions for stack ${stackId} in language ${language}`)
 
     // Get all questions from the stack
     const questions = await prisma.questionStackItem.findMany({
@@ -31,19 +32,47 @@ export async function GET(request: NextRequest) {
 
     console.log(`📊 Random-Question API: Found ${questions.length} questions in stack`)
 
+    // Helper function to get text in the requested language
+    const getTextInLanguage = (question: any, field: string): string => {
+      switch (language.toLowerCase()) {
+        case 'en':
+          return question[`${field}En`] || question[field]
+        case 'fr':
+          return question[`${field}Fr`] || question[field]
+        default:
+          return question[field]
+      }
+    }
+
+    // Helper function to get answers in the requested language
+    const getAnswersInLanguage = (question: any): string[] => {
+      let answers: string[]
+      switch (language.toLowerCase()) {
+        case 'en':
+          answers = question.answersEn ? JSON.parse(question.answersEn) : JSON.parse(question.answers)
+          break
+        case 'fr':
+          answers = question.answersFr ? JSON.parse(question.answersFr) : JSON.parse(question.answers)
+          break
+        default:
+          answers = JSON.parse(question.answers)
+      }
+      return answers
+    }
+
     // If only one question is requested, return a single random question
     if (count === 1) {
       const randomIndex = Math.floor(Math.random() * questions.length)
       const randomQuestion = questions[randomIndex]
 
-      const answers = JSON.parse(randomQuestion.answers)
+      const answers = getAnswersInLanguage(randomQuestion)
       const correctAnswers = JSON.parse(randomQuestion.correctAnswers)
 
       return NextResponse.json({
         success: true,
         question: {
           id: randomQuestion.id,
-          question: randomQuestion.question,
+          question: getTextInLanguage(randomQuestion, 'question'),
           answers: answers,
           correctAnswers: correctAnswers,
           questionType: randomQuestion.questionType,
@@ -63,12 +92,12 @@ export async function GET(request: NextRequest) {
     for (let i = 0; i < Math.min(count, questions.length); i++) {
       const question = shuffledQuestions[i]
       
-      const answers = JSON.parse(question.answers)
+      const answers = getAnswersInLanguage(question)
       const correctAnswers = JSON.parse(question.correctAnswers)
 
       selectedQuestions.push({
         id: question.id,
-        question: question.question,
+        question: getTextInLanguage(question, 'question'),
         answers: answers,
         correctAnswers: correctAnswers,
         questionType: question.questionType,

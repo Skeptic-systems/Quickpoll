@@ -35,6 +35,7 @@ export default function QuizResultsPage() {
   const [result, setResult] = useState<QuizResult | null>(null)
   const [isLoading, setIsLoading] = useState(true)
 
+
   useEffect(() => {
     const loadResults = async () => {
       try {
@@ -57,7 +58,7 @@ export default function QuizResultsPage() {
           console.log('🔍 Results: All answers:', data.answers)
           
           // Detailliertes Logging für jede Antwort
-          data.answers?.forEach((answer, index) => {
+          data.answers?.forEach((answer: any, index: number) => {
             console.log(`🔍 Results: Answer ${index + 1}:`, {
               moduleId: answer.moduleId,
               questionText: answer.questionText,
@@ -232,7 +233,7 @@ export default function QuizResultsPage() {
                         }
 
                         return selectedChoicesArray.length > 0 ? (
-                          selectedChoicesArray.map((choiceIndex, idx) => (
+                          selectedChoicesArray.map((choiceIndex: any, idx: number) => (
                             <div
                               key={idx}
                               className={`p-3 rounded-lg border-2 ${
@@ -283,7 +284,7 @@ export default function QuizResultsPage() {
                         })
 
                         return correctChoicesArray.length > 0 ? (
-                          correctChoicesArray.map((choiceIndex, idx) => {
+                          correctChoicesArray.map((choiceIndex: any, idx: number) => {
                             console.log('🔍 Results: Rendering correct choice:', {
                               choiceIndex,
                               answerText: answer.questionAnswers[choiceIndex]

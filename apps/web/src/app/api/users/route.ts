@@ -13,7 +13,7 @@ export async function DELETE(request: NextRequest) {
   } catch (error) {
     console.error('Error deleting users:', error)
     return NextResponse.json(
-      { error: 'Failed to delete users', details: error.message },
+      { error: 'Failed to delete users', details: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 }
     )
   }

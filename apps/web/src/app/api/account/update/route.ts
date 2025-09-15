@@ -35,6 +35,7 @@ const accountMessages = {
 }
 
 export async function POST(request: NextRequest) {
+  let language = 'de' // Default language
   try {
     console.log('🔍 API Account-Update: Starting session check...')
     const session = await auth.api.getSession({

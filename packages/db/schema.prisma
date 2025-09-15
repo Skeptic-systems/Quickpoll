@@ -190,6 +190,11 @@ model QuestionStackItem {
   correctAnswers String   // JSON stringified string[] - can be multiple for multiple choice
   questionType   String   @default("single") // "single" | "multiple"
   order          Int      @default(0)
+  // Translation fields
+  questionEn     String?  // English translation of question
+  questionFr     String?  // French translation of question
+  answersEn      String?  // JSON stringified string[] - English translations of answers
+  answersFr      String?  // JSON stringified string[] - French translations of answers
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
   

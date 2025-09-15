@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 export async function GET(request: NextRequest, { params }: { params: { slug: string } }) {
   try {
     const { slug } = params
@@ -32,7 +35,7 @@ export async function GET(request: NextRequest, { params }: { params: { slug: st
       )
     }
 
-    return NextResponse.json(quiz)
+    return NextResponse.json(quiz, { headers: { 'Cache-Control': 'no-store' } })
   } catch (error) {
     console.error('Error fetching quiz by slug:', error)
     return NextResponse.json(
@@ -41,5 +44,6 @@ export async function GET(request: NextRequest, { params }: { params: { slug: st
     )
   }
 }
+
 
 

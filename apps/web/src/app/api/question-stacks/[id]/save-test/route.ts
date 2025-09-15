@@ -63,13 +63,14 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
   } catch (error) {
     console.error('Error saving question stack:', error)
     console.error('Error details:', {
-      message: error.message,
-      stack: error.stack,
-      name: error.name
+      message: error instanceof Error ? error.message : 'Unknown error',
+      stack: error instanceof Error ? error.stack : undefined,
+      name: error instanceof Error ? error.name : 'Unknown'
     })
     return NextResponse.json(
-      { error: 'Failed to save question stack', details: error.message },
+      { error: 'Failed to save question stack', details: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 }
     )
   }
 }
+

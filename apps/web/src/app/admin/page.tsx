@@ -19,6 +19,7 @@ interface Quiz {
   _count: {
     questions: number
     attempts: number
+    modules: number
   }
 }
 

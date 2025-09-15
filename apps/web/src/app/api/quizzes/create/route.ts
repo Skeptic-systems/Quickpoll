@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { auth } from '@/lib/auth'
+import { revalidatePath, revalidateTag } from 'next/cache'
+
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
 
 export async function POST(request: NextRequest) {
   try {
@@ -59,7 +63,8 @@ export async function POST(request: NextRequest) {
 
     // Translate modules first
     console.log('Translating modules...')
-    const translateResponse = await fetch(`${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/api/translate-modules`, {
+    const origin = request.headers.get('origin') || `https://${request.headers.get('host')}`
+    const translateResponse = await fetch(`${origin}/api/translate-modules`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -93,6 +98,11 @@ export async function POST(request: NextRequest) {
     })
     console.log('Created modules:', createdModules)
 
+    // Invalidate caches
+    revalidateTag('quizzes')
+    revalidatePath('/')
+    revalidatePath('/admin')
+
     return NextResponse.json({ 
       success: true, 
       quiz: {
@@ -100,7 +110,7 @@ export async function POST(request: NextRequest) {
         title: quiz.title,
         slug: quiz.slug
       }
-    })
+    }, { headers: { 'Cache-Control': 'no-store' } })
   } catch (error) {
     console.error('Error creating quiz:', error)
     return NextResponse.json(

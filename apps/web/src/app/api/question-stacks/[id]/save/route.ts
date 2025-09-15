@@ -1,6 +1,48 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 
+// Helper function to translate text using DeepL
+async function translateText(text: string, targetLang: string): Promise<string> {
+  try {
+    const DEEPL_API_KEY = process.env.DEEPL_API_KEY
+    const DEEPL_API_URL = 'https://api-free.deepl.com/v2/translate'
+
+    if (!DEEPL_API_KEY) {
+      console.warn('DeepL API key not configured, returning original text')
+      return text
+    }
+
+    const response = await fetch(DEEPL_API_URL, {
+      method: 'POST',
+      headers: {
+        'Authorization': `DeepL-Auth-Key ${DEEPL_API_KEY}`,
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: new URLSearchParams({
+        text: text,
+        target_lang: targetLang,
+        source_lang: 'DE', // Assume German as source language
+      }),
+    })
+
+    if (!response.ok) {
+      console.error('DeepL API error:', response.status)
+      return text // Return original text if translation fails
+    }
+
+    const result = await response.json()
+    
+    if (result.translations && result.translations.length > 0) {
+      return result.translations[0].text
+    } else {
+      return text
+    }
+  } catch (error) {
+    console.error('Translation error:', error)
+    return text // Return original text if translation fails
+  }
+}
+
 export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
   try {
     console.log('POST /api/question-stacks/[id]/save called')
@@ -56,11 +98,29 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
       })
       console.log('Deleted questions count:', deletedCount.count)
 
-      console.log('Creating new questions...')
-      // Create new questions
+      console.log('Creating new questions with translations...')
+      // Create new questions with translations
       const newQuestions = await Promise.all(
-        questions.map((question: any, index: number) => {
+        questions.map(async (question: any, index: number) => {
           console.log(`Creating question ${index + 1}:`, question.question)
+          
+          // Translate question text
+          const questionEn = await translateText(question.question.trim(), 'EN')
+          const questionFr = await translateText(question.question.trim(), 'FR')
+          
+          // Translate answers
+          const answersEn = await Promise.all(
+            question.answers.map((answer: string) => translateText(answer.trim(), 'EN'))
+          )
+          const answersFr = await Promise.all(
+            question.answers.map((answer: string) => translateText(answer.trim(), 'FR'))
+          )
+          
+          console.log(`Translated question ${index + 1}:`)
+          console.log(`  DE: ${question.question}`)
+          console.log(`  EN: ${questionEn}`)
+          console.log(`  FR: ${questionFr}`)
+          
           return tx.questionStackItem.create({
             data: {
               stackId: id,
@@ -68,7 +128,12 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
               answers: JSON.stringify(question.answers),
               correctAnswers: JSON.stringify(question.correctAnswers),
               questionType: question.questionType,
-              order: index + 1
+              order: index + 1,
+              // Store translations
+              questionEn: questionEn,
+              questionFr: questionFr,
+              answersEn: JSON.stringify(answersEn),
+              answersFr: JSON.stringify(answersFr)
             }
           })
         })
@@ -106,12 +171,12 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
   } catch (error) {
     console.error('Error saving question stack:', error)
     console.error('Error details:', {
-      message: error.message,
-      stack: error.stack,
-      name: error.name
+      message: error instanceof Error ? error.message : 'Unknown error',
+      stack: error instanceof Error ? error.stack : undefined,
+      name: error instanceof Error ? error.name : 'Unknown'
     })
     return NextResponse.json(
-      { error: 'Failed to save question stack', details: error.message },
+      { error: 'Failed to save question stack', details: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 }
     )
   }

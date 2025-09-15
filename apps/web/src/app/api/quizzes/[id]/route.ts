@@ -1,5 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { revalidatePath, revalidateTag } from 'next/cache'
+
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
 
 export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
   try {
@@ -39,7 +43,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
     console.log(`Quiz slug: ${quiz.slug}`)
     console.log(`Quiz has ${quiz._count.modules} modules`)
 
-    return NextResponse.json(quiz)
+    return NextResponse.json(quiz, { headers: { 'Cache-Control': 'no-store' } })
   } catch (error) {
     console.error('Error fetching quiz:', error)
     return NextResponse.json(
@@ -90,10 +94,15 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
 
     console.log(`Successfully deleted quiz: ${quiz.title}`)
 
+    // Invalidate caches
+    revalidateTag('quizzes')
+    revalidatePath('/')
+    revalidatePath('/admin')
+
     return NextResponse.json({ 
       success: true,
       message: `Quiz "${quiz.title}" wurde erfolgreich gelöscht`
-    })
+    }, { headers: { 'Cache-Control': 'no-store' } })
   } catch (error) {
     console.error('Error deleting quiz:', error)
     return NextResponse.json(

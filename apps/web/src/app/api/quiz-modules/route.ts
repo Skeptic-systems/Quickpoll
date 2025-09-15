@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { auth } from '@/lib/auth'
+import { revalidatePath, revalidateTag } from 'next/cache'
+
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
 
 export async function POST(request: NextRequest) {
   try {
@@ -43,7 +47,8 @@ export async function POST(request: NextRequest) {
 
     // Translate modules first
     console.log('Translating modules for update...')
-    const translateResponse = await fetch(`${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/api/translate-modules`, {
+    const origin = request.headers.get('origin') || `https://${request.headers.get('host')}`
+    const translateResponse = await fetch(`${origin}/api/translate-modules`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -76,7 +81,12 @@ export async function POST(request: NextRequest) {
       data: moduleData
     })
 
-    return NextResponse.json({ success: true })
+    // Invalidate caches
+    revalidateTag('quizzes')
+    revalidatePath('/')
+    revalidatePath('/admin')
+
+    return NextResponse.json({ success: true }, { headers: { 'Cache-Control': 'no-store' } })
   } catch (error) {
     console.error('Error saving quiz modules:', error)
     return NextResponse.json(
@@ -104,7 +114,7 @@ export async function GET(request: NextRequest) {
     })
 
     console.log('Fetched modules for quiz:', quizId, modules)
-    return NextResponse.json(modules)
+    return NextResponse.json(modules, { headers: { 'Cache-Control': 'no-store' } })
   } catch (error) {
     console.error('Error fetching quiz modules:', error)
     return NextResponse.json(

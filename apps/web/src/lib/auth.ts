@@ -16,7 +16,7 @@ export const auth = betterAuth({
   baseURL: process.env.NEXT_PUBLIC_BASE_URL!,
   trustedOrigins: [process.env.NEXT_PUBLIC_BASE_URL!],
   logger: {
-    level: "debug",
+    verboseLogging: true,
   },
 })
 
@@ -45,20 +45,20 @@ export async function ensureAdminUser() {
         }
       })
       
-      if (user.data) {
-        console.log('Admin user created successfully:', user.data.user.email)
+      if (user.user) {
+        console.log('Admin user created successfully:', user.user.email)
         
         // Update user role to admin
         await prisma.user.update({
-          where: { id: user.data.user.id },
+          where: { id: user.user.id },
           data: { role: 'admin' }
         })
         
         console.log('Admin user role set successfully')
-        return user.data.user
+        return user.user
       } else {
-        console.error('Failed to create admin user:', user.error)
-        throw new Error(`Failed to create admin user: ${JSON.stringify(user.error)}`)
+        console.error('Failed to create admin user: No user returned')
+        throw new Error('Failed to create admin user: No user returned')
       }
     } else {
       console.log(`Found ${userCount} existing users. Skipping admin user creation.`)

@@ -105,7 +105,7 @@ export default function QuestionStackEditorPage() {
       
     } catch (error) {
       console.error('Error saving question stack:', error)
-      alert(`Fehler beim Speichern des Fragenstapels: ${error.message}`)
+      alert(`Fehler beim Speichern des Fragenstapels: ${error instanceof Error ? error.message : 'Unbekannter Fehler'}`)
     } finally {
       setIsSaving(false)
     }
@@ -346,17 +346,19 @@ export default function QuestionStackEditorPage() {
       try {
         if (typeof question.answers === 'string') {
           // Versuche JSON zu parsen
-          answersArray = JSON.parse(question.answers)
+          try {
+            answersArray = JSON.parse(question.answers)
+          } catch {
+            // Fallback: Komma-getrennte Strings
+            answersArray = question.answers.split(',').map(a => a.trim())
+          }
         } else if (Array.isArray(question.answers)) {
           answersArray = question.answers
-        } else {
-          // Fallback: Komma-getrennte Strings
-          answersArray = question.answers.split(',').map(a => a.trim())
         }
       } catch (error) {
         console.error('Error parsing answers:', error, question.answers)
-        // Fallback: Komma-getrennte Strings
-        answersArray = question.answers.split(',').map(a => a.trim())
+        // Fallback: leeres Array
+        answersArray = []
       }
       
       // Robuste Behandlung der correctAnswers
@@ -404,17 +406,19 @@ export default function QuestionStackEditorPage() {
                       try {
                         if (typeof question.answers === 'string') {
                           // Versuche JSON zu parsen
-                          answersArray = JSON.parse(question.answers)
+                          try {
+                            answersArray = JSON.parse(question.answers)
+                          } catch {
+                            // Fallback: Komma-getrennte Strings
+                            answersArray = question.answers.split(',').map(a => a.trim())
+                          }
                         } else if (Array.isArray(question.answers)) {
                           answersArray = question.answers
-                        } else {
-                          // Fallback: Komma-getrennte Strings
-                          answersArray = question.answers.split(',').map(a => a.trim())
                         }
                       } catch (error) {
                         console.error('Error parsing answers:', error, question.answers)
-                        // Fallback: Komma-getrennte Strings
-                        answersArray = question.answers.split(',').map(a => a.trim())
+                        // Fallback: leeres Array
+                        answersArray = []
                       }
                       
                       return answersArray.map((answer: string, answerIndex: number) => {
@@ -553,7 +557,7 @@ export default function QuestionStackEditorPage() {
                 {/* Correct Answer */}
                 <div>
                   <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-                    {translations?.admin.questions.questionForm.correctAnswer || 'Richtige Antwort(en)'}
+                    {translations?.admin.questions.questionForm.correctAnswers || 'Richtige Antwort(en)'}
                   </label>
                   <div className="space-y-2">
                     {answers.filter(a => a.trim()).map((answer, index) => {

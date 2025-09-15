@@ -32,6 +32,7 @@ const userMessages = {
 }
 
 export async function POST(request: NextRequest) {
+  let language = 'de' // Default language
   try {
     console.log('🔍 API User-Create: Starting session check...')
     const session = await auth.api.getSession({
@@ -74,8 +75,9 @@ export async function POST(request: NextRequest) {
       password, 
       confirmPassword, 
       role = 'user',
-      language = 'de' 
+      language: requestLanguage = 'de' 
     } = await request.json()
+    language = requestLanguage
 
     console.log('📝 API User-Create: Creating user with data:', { name, email, role })
 

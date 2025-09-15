@@ -99,7 +99,7 @@ const RandomQuestionModule = React.memo(({ module, answers, setAnswers }: {
                 key={index}
                 onClick={() => {
                   console.log('🖱️ RandomQuestion: Answer clicked:', { moduleId: module.id, answerIndex: index, answer })
-                  setAnswers(prev => ({
+                  setAnswers((prev: any) => ({
                     ...prev,
                     [module.id]: index
                   }))
@@ -222,14 +222,14 @@ export default function QuizExecutionPage() {
             console.log('📊 Quiz: Found modules:', sortedModules.length)
             
             // Preload all random questions to avoid duplicates
-            const randomModules = sortedModules.filter(module => module.type === 'randomQuestion')
+            const randomModules = sortedModules.filter((module: any) => module.type === 'randomQuestion')
             console.log('🎲 Quiz: Found random modules:', randomModules.length)
             
             if (randomModules.length > 0) {
               console.log('🔄 Quiz: Preloading random questions...')
               
               // Group random modules by stackId to get unique questions per stack
-              const stackGroups = randomModules.reduce((groups: {[key: string]: QuizModule[]}, module) => {
+              const stackGroups = randomModules.reduce((groups: {[key: string]: QuizModule[]}, module: any) => {
                 const stackId = module.data.stackId
                 if (!groups[stackId]) {
                   groups[stackId] = []
@@ -245,8 +245,8 @@ export default function QuizExecutionPage() {
               
               for (const [stackId, modules] of Object.entries(stackGroups)) {
                 try {
-                  console.log(`🔍 Quiz: Loading questions for stack ${stackId}...`)
-                  const response = await fetch(`/api/random-question?stackId=${stackId}&count=${modules.length}`)
+                  console.log(`🔍 Quiz: Loading questions for stack ${stackId} in language ${language}...`)
+                  const response = await fetch(`/api/random-question?stackId=${stackId}&count=${(modules as any).length}&language=${language}`)
                   if (response.ok) {
                     const data = await response.json()
                     preloadedQuestions[stackId] = data.questions || []
@@ -316,7 +316,13 @@ export default function QuizExecutionPage() {
     if (quizSlug) {
       loadQuiz()
     }
-  }, [quizSlug])
+  }, [quizSlug, language]) // Add language dependency to reload when language changes
+
+  // Reset answers when language changes
+  useEffect(() => {
+    setAnswers({})
+    console.log('🔄 Quiz: Language changed, resetting answers')
+  }, [language])
 
   // Handle answer selection - Stabilisiert mit useCallback
   const handleAnswerSelect = React.useCallback((moduleId: string, answerIndex: number) => {
@@ -563,7 +569,14 @@ export default function QuizExecutionPage() {
           {/* Quiz Title */}
           <div className="text-center mb-8">
             <h1 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-2">
-              {getTextInLanguage(quiz.title)}
+              {(() => {
+                // Try to get translated title from first title module, fallback to quiz title
+                const firstTitleModule = quizPages[0]?.modules?.find(module => module.type === 'title')
+                if (firstTitleModule?.data?.text) {
+                  return getTextInLanguage(firstTitleModule.data.text)
+                }
+                return quiz.title
+              })()}
             </h1>
             <p className="text-lg text-slate-600 dark:text-slate-400">
               {formatPageCounter(currentPage, quizPages.length)}

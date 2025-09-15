@@ -63,7 +63,7 @@ export default function LandingPage() {
       {/* Main Content */}
       <main className="relative">
         {/* Hero Section */}
-        <section className="flex flex-col items-center justify-center min-h-screen px-4 sm:px-6 lg:px-8">
+        <section className="flex flex-col items-center px-4 sm:px-6 lg:px-8 pt-40 pb-16">
           {/* Background decorative elements */}
           <div className="absolute inset-0 overflow-hidden pointer-events-none">
             <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-orange-200/30 to-orange-300/30 dark:from-orange-500/20 dark:to-orange-600/20 rounded-full blur-3xl"></div>
@@ -80,7 +80,7 @@ export default function LandingPage() {
             </h1>
 
             {/* Subtitle */}
-            <p className="text-2xl sm:text-3xl lg:text-4xl text-slate-600 dark:text-slate-300 mb-16 font-light max-w-3xl mx-auto leading-relaxed">
+            <p className="text-2xl sm:text-3xl lg:text-4xl text-slate-600 dark:text-slate-300 mb-12 font-light max-w-3xl mx-auto leading-relaxed">
               {translations?.home?.subtitle || "Create and conduct surveys - simple, fast and anonymous"}
             </p>
 
@@ -152,7 +152,7 @@ export default function LandingPage() {
         </section>
 
         {/* Features Section */}
-        <section className="py-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-transparent to-slate-50/50 dark:to-slate-800/50">
+        <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-transparent to-slate-50/50 dark:to-slate-800/50">
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-20">
               <h2 className="text-4xl sm:text-5xl font-bold text-slate-900 dark:text-white mb-6">

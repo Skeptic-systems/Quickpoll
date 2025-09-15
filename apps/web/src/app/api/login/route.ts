@@ -27,8 +27,10 @@ const loginMessages = {
 }
 
 export async function POST(request: NextRequest) {
+  let language = 'de' // Default language
   try {
-    const { email, password, language = 'de' } = await request.json()
+    const { email, password, language: requestLanguage = 'de' } = await request.json()
+    language = requestLanguage
 
     if (!email || !password) {
       return NextResponse.json(

@@ -1,5 +1,5 @@
 {
-  "name": "vdma-quickpoll",
+  "name": "quickpoll",
   "version": "1.0.0",
   "private": true,
   "description": "VDMA QuickPoll - Mobile-optimierte Quiz-Webapp mit Admin-Panel",
@@ -7,11 +7,11 @@
     "dev": "pnpm --filter web dev",
     "build": "pnpm --filter web build",
     "start": "pnpm --filter web start",
-    "lint": "pnpm --filter web lint",
     "db:generate": "pnpm --filter db generate",
     "db:push": "pnpm --filter db push",
     "db:migrate": "pnpm --filter db migrate",
-    "db:studio": "pnpm --filter db studio"
+    "db:studio": "pnpm --filter db studio",
+    "pm2": "pm2 start ecosystem.config.js --env production"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",
@@ -20,5 +20,8 @@
   "engines": {
     "node": ">=18.0.0",
     "pnpm": ">=8.0.0"
+  },
+  "dependencies": {
+    "pnpm": "^10.16.1"
   }
 }

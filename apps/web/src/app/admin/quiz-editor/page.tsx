@@ -933,7 +933,6 @@ export default function QuizEditorPage() {
               </button>
 
               {/* QR Code Button - Show when quiz is saved or when editing existing quiz */}
-              {console.log('🔘 QR Code Button Debug:', { isQuizSaved, isEditingExistingQuiz, quizName, currentQuizId, quizUrl })}
               {(isQuizSaved || isEditingExistingQuiz) && (
                 <button
                   onClick={showQRCodeModal}

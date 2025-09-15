@@ -41,7 +41,7 @@ export default function AccountPage() {
     */
   }, [])
 
-  const handleLogin = async (email: string, password: string) => {
+  const handleLogin = async (email: string, password: string): Promise<boolean> => {
     try {
       const response = await fetch('/api/login', {
         method: 'POST',
@@ -54,9 +54,12 @@ export default function AccountPage() {
 
       if (response.ok) {
         setIsAuthenticated(true)
+        return true
       }
+      return false
     } catch (error) {
       console.error('Login failed:', error)
+      return false
     }
   }
 

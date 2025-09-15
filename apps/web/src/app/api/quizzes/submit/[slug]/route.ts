@@ -70,9 +70,13 @@ export async function POST(
         if (module.type === 'question') {
           // Normale Quiz-Frage
           const questionData = module.data
-          let correctAnswerTexts = questionData.correctAnswers || []
-          const questionAnswers = questionData.answers || []
-          const questionType = questionData.questionType || 'single'
+          if (!questionData) {
+            console.error('❌ Quiz-Submit: Question data is null')
+            continue
+          }
+          let correctAnswerTexts = (questionData as any).correctAnswers || []
+          const questionAnswers = (questionData as any).answers || []
+          const questionType = (questionData as any).questionType || 'single'
 
           console.log(`🔍 Quiz-Submit: Question data:`, {
             correctAnswerTexts,
@@ -128,8 +132,8 @@ export async function POST(
             correctChoices = JSON.stringify(correctAnswerIndices)
             
             // Teilpunkte berechnen: (richtige Antworten - falsche Antworten) / Gesamtantworten
-            const correctCount = [...userSet].filter(ans => correctSet.has(ans)).length
-            const wrongCount = [...userSet].filter(ans => !correctSet.has(ans)).length
+            const correctCount = Array.from(userSet).filter(ans => correctSet.has(ans)).length
+            const wrongCount = Array.from(userSet).filter(ans => !correctSet.has(ans)).length
             const totalCorrect = correctAnswerIndices.length
             
             if (totalCorrect > 0) {
@@ -141,8 +145,12 @@ export async function POST(
         } else if (module.type === 'randomQuestion') {
           // Random Question - hole die spezifische Frage die verwendet wurde
           const randomData = module.data
-          const usedQuestionId = randomData.usedQuestionId
-          const stackId = randomData.stackId
+          if (!randomData) {
+            console.error('❌ Quiz-Submit: Random data is null')
+            continue
+          }
+          const usedQuestionId = (randomData as any).usedQuestionId
+          const stackId = (randomData as any).stackId
           
           console.log(`🔍 Quiz-Submit: Processing random question for stack ${stackId}, usedQuestionId: ${usedQuestionId}`)
           
@@ -169,25 +177,27 @@ export async function POST(
           }
           
           if (questionForEvaluation) {
-            let correctAnswerTexts = questionForEvaluation.correctAnswers || '[]'
-            let questionAnswers = questionForEvaluation.answers || '[]'
+            let correctAnswerTexts: any[] = []
+            let questionAnswers: any[] = []
             const questionType = questionForEvaluation.questionType || 'single'
 
             // Parse correctAnswerTexts with robust handling
             try {
-              correctAnswerTexts = JSON.parse(correctAnswerTexts)
+              const correctAnswersRaw = questionForEvaluation.correctAnswers || '[]'
+              correctAnswerTexts = JSON.parse(correctAnswersRaw)
               // Handle double-escaped JSON
               if (typeof correctAnswerTexts === 'string') {
                 correctAnswerTexts = JSON.parse(correctAnswerTexts)
               }
             } catch (error) {
-              console.error('Error parsing correctAnswerTexts:', error, correctAnswerTexts)
+              console.error('Error parsing correctAnswerTexts:', error, questionForEvaluation.correctAnswers)
               correctAnswerTexts = []
             }
 
             // Parse questionAnswers with robust handling
             try {
-              questionAnswers = JSON.parse(questionAnswers)
+              const questionAnswersRaw = questionForEvaluation.answers || '[]'
+              questionAnswers = JSON.parse(questionAnswersRaw)
               // Handle double-escaped JSON
               if (typeof questionAnswers === 'string') {
                 questionAnswers = JSON.parse(questionAnswers)
@@ -241,8 +251,8 @@ export async function POST(
               correctChoices = JSON.stringify(correctAnswerIndices)
               
               // Teilpunkte berechnen
-              const correctCount = [...userSet].filter(ans => correctSet.has(ans)).length
-              const wrongCount = [...userSet].filter(ans => !correctSet.has(ans)).length
+              const correctCount = Array.from(userSet).filter(ans => correctSet.has(ans)).length
+              const wrongCount = Array.from(userSet).filter(ans => !correctSet.has(ans)).length
               const totalCorrect = correctAnswerIndices.length
               
               if (totalCorrect > 0) {

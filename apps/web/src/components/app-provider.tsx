@@ -12,7 +12,10 @@ interface Translations {
     copyright: string
     impressum: string
     datenschutz: string
+    poweredBy: string
+    poweredByDescription: string
   }
+  language: string
   home: {
     title: string
     subtitle: string
@@ -118,6 +121,7 @@ interface Translations {
       actions: {
         edit: string
         results: string
+        delete: string
       }
       status: {
         active: string
@@ -133,6 +137,10 @@ interface Translations {
       }
       modules: {
         title: string
+        heading: {
+          title: string
+          description: string
+        }
         question: {
           title: string
           description: string
@@ -181,6 +189,40 @@ interface Translations {
         h1: string
         h2: string
         h3: string
+      }
+      qrCode: {
+        showQR: string
+        title: string
+        titleExisting: string
+        titleNew: string
+        description: string
+        copyLink: string
+        copyUrl: string
+        downloadQR: string
+        downloadPng: string
+        close: string
+        urlLabel: string
+      }
+    }
+    questions: {
+      questionForm: {
+        questionType: string
+        singleChoice: string
+        multipleChoice: string
+        questionText: string
+        answers: string
+        addAnswer: string
+        correctAnswers: string
+        saveQuestion: string
+        cancel: string
+        editQuestion: string
+        deleteQuestion: string
+      }
+      deleteConfirm: {
+        title: string
+        message: string
+        confirm: string
+        cancel: string
       }
     }
     login: {
@@ -243,10 +285,23 @@ interface Translations {
       starting: string
       backToHome: string
     }
+    quizDisplay: {
+      title: string
+      randomQuestion: string
+      fromStack: string
+      startQuiz: string
+      notFound: {
+        title: string
+        description: string
+      }
+    }
     quizExecution: {
       pageCounter: string
       backButton: string
       nextButton: string
+      submitButton: string
+      congratulations: string
+      quizCompleted: string
       backToHome: string
       notFound: {
         title: string
@@ -297,6 +352,7 @@ export function AppProvider({ children }: AppProviderProps) {
       impressum: "Impressum",
       datenschutz: "Datenschutz"
     },
+    language: "de",
     home: {
       title: "Mobile-optimierte Quiz-Webapp für Events und Umfragen",
       subtitle: "Erstelle und führe Umfragen durch - einfach, schnell und anonym",
@@ -401,7 +457,8 @@ export function AppProvider({ children }: AppProviderProps) {
         },
         actions: {
           edit: "Bearbeiten",
-          results: "Ergebnisse"
+          results: "Ergebnisse",
+          delete: "Löschen"
         },
         status: {
           active: "Aktiv",
@@ -417,6 +474,10 @@ export function AppProvider({ children }: AppProviderProps) {
         },
         modules: {
           title: "Module",
+          heading: {
+            title: "Überschrift",
+            description: "Eine Überschrift für Strukturierung"
+          },
           question: {
             title: "Frage",
             description: "Erstelle eine Frage mit Antworten"
@@ -440,10 +501,6 @@ export function AppProvider({ children }: AppProviderProps) {
           pageBreak: {
             title: "Seitenumbruch",
             description: "Seitenende"
-          },
-          heading: {
-            title: "Überschrift",
-            description: "Füge eine Überschrift hinzu"
           }
         },
         actions: {
@@ -469,6 +526,40 @@ export function AppProvider({ children }: AppProviderProps) {
           h1: "H1 (Groß)",
           h2: "H2 (Mittel)",
           h3: "H3 (Klein)"
+        },
+        qrCode: {
+          showQR: "QR-Code anzeigen",
+          title: "QR-Code für Quiz",
+          titleExisting: "QR-Code für Quiz",
+          titleNew: "Quiz erfolgreich erstellt!",
+          description: "Teile diesen QR-Code oder Link mit Teilnehmern",
+          copyLink: "Link kopieren",
+          copyUrl: "URL kopieren",
+          downloadQR: "QR-Code herunterladen",
+          downloadPng: "PNG Download",
+          close: "Schließen",
+          urlLabel: "Quiz-URL:"
+        }
+      },
+      questions: {
+        questionForm: {
+          questionType: "Fragetyp",
+          singleChoice: "Einfachauswahl",
+          multipleChoice: "Mehrfachauswahl",
+          questionText: "Fragentext",
+          answers: "Antwortmöglichkeiten",
+          addAnswer: "Antwort hinzufügen",
+          correctAnswers: "Korrekte Antworten",
+          saveQuestion: "Frage speichern",
+          cancel: "Abbrechen",
+          editQuestion: "Frage bearbeiten",
+          deleteQuestion: "Frage löschen"
+        },
+        deleteConfirm: {
+          title: "Fragenstapel löschen",
+          message: "Bist du sicher, dass du diesen Fragenstapel löschen möchtest? Diese Aktion kann nicht rückgängig gemacht werden.",
+          confirm: "Löschen",
+          cancel: "Abbrechen"
         }
       },
       login: {
@@ -536,64 +627,28 @@ export function AppProvider({ children }: AppProviderProps) {
         starting: "Wird gestartet...",
         backToHome: "Zurück zur Startseite"
       },
+      quizDisplay: {
+        title: "Quiz-Vorschau",
+        randomQuestion: "Zufällige Frage",
+        fromStack: "Aus Fragenstapel",
+        startQuiz: "Quiz starten",
+        notFound: {
+          title: "Quiz nicht gefunden",
+          description: "Das angeforderte Quiz konnte nicht gefunden werden."
+        }
+      },
       quizExecution: {
         pageCounter: "Seite {current} von {total}",
         backButton: "Zurück",
         nextButton: "Weiter",
+        submitButton: "Abgeben",
+        congratulations: "Glückwunsch!",
+        quizCompleted: "Quiz erfolgreich abgeschlossen!",
         backToHome: "Zurück zur Startseite",
         notFound: {
           title: "Quiz nicht gefunden",
           description: "Das angeforderte Quiz konnte nicht gefunden werden.",
           backToHome: "Zurück zur Startseite"
-        }
-      },
-      questions: {
-        title: "Fragenstapel verwalten",
-        createNew: "Neuen Fragenstapel erstellen",
-        createStack: "Neuen Fragenstapel erstellen",
-        stackName: "Name des Fragenstapels",
-        stackNamePlaceholder: "z.B. Allgemeinwissen, Mathematik...",
-        create: "Erstellen",
-        cancel: "Abbrechen",
-        noStacks: {
-          title: "Noch keine Fragenstapel erstellt",
-          description: "Erstelle deinen ersten Fragenstapel, um Fragen und Antworten für deine Quizzes zu sammeln.",
-          createFirst: "Ersten Fragenstapel erstellen →"
-        },
-        myStacks: "Meine Fragenstapel",
-        questions: "Fragen",
-        edit: "Bearbeiten",
-        delete: "Löschen",
-        backToStacks: "Zurück zu Fragenstapeln",
-        editStack: "Fragenstapel bearbeiten",
-        addQuestion: "Neue Frage hinzufügen",
-        noQuestions: {
-          title: "Noch keine Fragen erstellt",
-          description: "Füge deine erste Frage zu diesem Fragenstapel hinzu.",
-          addFirst: "Erste Frage hinzufügen →"
-        },
-        questionForm: {
-          title: "Neue Frage hinzufügen",
-          editTitle: "Frage bearbeiten",
-          question: "Frage",
-          questionPlaceholder: "Formuliere deine Frage...",
-          questionType: "Fragetyp",
-          singleChoice: "Einfachauswahl",
-          multipleChoice: "Mehrfachauswahl",
-          answers: "Antwortmöglichkeiten",
-          addAnswer: "Antwort hinzufügen",
-          answerPlaceholder: "Antwort",
-          correctAnswer: "Richtige Antwort",
-          correctAnswerPlaceholder: "Wähle die richtige Antwort...",
-          save: "Speichern",
-          update: "Aktualisieren",
-          cancel: "Abbrechen"
-        },
-        deleteConfirm: {
-          title: "Fragenstapel löschen",
-          message: "Bist du sicher, dass du diesen Fragenstapel löschen möchtest? Diese Aktion kann nicht rückgängig gemacht werden.",
-          confirm: "Löschen",
-          cancel: "Abbrechen"
         }
       }
     }
