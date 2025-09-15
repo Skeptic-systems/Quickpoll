@@ -22,10 +22,17 @@ jobs:
     - name: Setup pnpm
       uses: pnpm/action-setup@v4
       with:
-        version: 8
+        version: latest
         
     - name: Install dependencies
-      run: pnpm install --frozen-lockfile
+      run: |
+        if [ -f "pnpm-lock.yaml" ]; then
+          echo "Lockfile found, using frozen install"
+          pnpm install --frozen-lockfile
+        else
+          echo "No lockfile found, installing without frozen lockfile"
+          pnpm install --no-frozen-lockfile
+        fi
       
     - name: Generate Prisma client
       run: pnpm db:generate
