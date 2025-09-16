@@ -188,6 +188,13 @@ pnpm build
 pnpm pm2
 ```
 
+### Default Admin User:
+
+```
+Email:    admin@example.com
+Password: changeme
+```
+
 ## License
 
 This project is licensed under the GNU General Public License v3.0 - see the [LICENSE.md](LICENSE.md) file for details.
