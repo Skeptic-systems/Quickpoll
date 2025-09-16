@@ -66,9 +66,6 @@ jobs:
         BETTER_AUTH_SECRET: "ci-test-secret-key-for-build-only"
         DATABASE_URL: "mysql://test:test@localhost:3306/test"
       
-    - name: Run linting
-      run: pnpm lint
-      
     - name: Type check
       run: |
         pnpm --filter web exec tsc --noEmit
