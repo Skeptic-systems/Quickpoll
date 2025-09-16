@@ -191,9 +191,11 @@ pnpm pm2
 ### Default Admin User:
 
 ```
-Email:    admin@example.com
-Password: changeme
+Email:    admin@quickpoll.de
+Password: secure123
 ```
+
+Immediately after logging you should switch the username and passwort -> admin dashboard -> account settings.
 
 ## License
 
