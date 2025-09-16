@@ -3,6 +3,14 @@ name: Deploy to Production
 on:
   push:
     branches: [ main ]
+    paths:
+      - 'apps/web/**'
+      - 'packages/ui/**'
+      - 'packages/db/**'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
+      - 'pnpm-workspace.yaml'
+      - '.github/workflows/**'
   workflow_dispatch:
 
 jobs:
