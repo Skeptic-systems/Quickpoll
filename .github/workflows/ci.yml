@@ -70,4 +70,6 @@ jobs:
       run: |
         pnpm --filter web exec tsc --noEmit
         pnpm --filter @quickpoll/ui exec tsc --noEmit
-        pnpm --filter db exec tsc --noEmit
+        
+    - name: Type check database package
+      run: pnpm --filter db exec tsc --noEmit
