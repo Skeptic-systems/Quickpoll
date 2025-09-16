@@ -149,7 +149,8 @@ pnpm install
 
 ```bash
 cp env.example .env
-cp ./apps/web/env.example .env
+cp ./apps/web/env.example ./apps/web/.env
+cp ./packages/db/env.example ./packages/db/.env
 ```
 
 5. Set up the database:
