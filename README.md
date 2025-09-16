@@ -136,7 +136,7 @@ git clone https://github.com/Skeptic-systems/Quickpoll.git
 2. CD to projekt root:
 
 ```bash
-cd quickpoll
+cd Quickpoll
 ```
 
 3. Install dependencies:
@@ -156,7 +156,6 @@ cp ./packages/db/env.example ./packages/db/.env
 5. Set up the database:
 
 ```bash
-# Start the database (requires Docker)
 docker compose up -d
 ```
 
