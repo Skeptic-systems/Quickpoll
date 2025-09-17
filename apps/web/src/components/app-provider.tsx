@@ -303,6 +303,23 @@ interface Translations {
       congratulations: string
       quizCompleted: string
       backToHome: string
+      resultsTitle: string
+      loadingResults: string
+      resultsNotFound: string
+      resultsNotFoundDesc: string
+      detailedEvaluation: string
+      question: string
+      correct: string
+      incorrect: string
+      multipleChoice: string
+      singleChoice: string
+      yourAnswer: string
+      correctAnswer: string
+      noAnswerSelected: string
+      noCorrectAnswer: string
+      multipleChoiceHint: string
+      retryQuiz: string
+      of: string
       notFound: {
         title: string
         description: string
@@ -645,6 +662,23 @@ export function AppProvider({ children }: AppProviderProps) {
         congratulations: "Glückwunsch!",
         quizCompleted: "Quiz erfolgreich abgeschlossen!",
         backToHome: "Zurück zur Startseite",
+        resultsTitle: "Quiz abgeschlossen!",
+        loadingResults: "Lade Ergebnisse...",
+        resultsNotFound: "Ergebnisse nicht gefunden",
+        resultsNotFoundDesc: "Die Quiz-Ergebnisse konnten nicht geladen werden.",
+        detailedEvaluation: "Detaillierte Auswertung",
+        question: "Frage",
+        correct: "Richtig",
+        incorrect: "Falsch",
+        multipleChoice: "Mehrfachauswahl",
+        singleChoice: "Einfachauswahl",
+        yourAnswer: "Deine Antwort",
+        correctAnswer: "Richtige Antwort",
+        noAnswerSelected: "Keine Antwort ausgewählt",
+        noCorrectAnswer: "Keine korrekte Antwort definiert",
+        multipleChoiceHint: "Mehrfachauswahl: Teilpunkte werden für richtige und falsche Antworten vergeben",
+        retryQuiz: "Quiz nochmal machen",
+        of: "von",
         notFound: {
           title: "Quiz nicht gefunden",
           description: "Das angeforderte Quiz konnte nicht gefunden werden.",

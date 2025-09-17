@@ -4,6 +4,9 @@ import { useState, useEffect } from 'react'
 import { useParams } from 'next/navigation'
 import { useApp } from '@/components/app-provider'
 import Link from 'next/link'
+import Image from 'next/image'
+import { LanguageSwitcher } from '@/components/language-switcher'
+import { ThemeToggle } from '@/components/theme-toggle'
 
 interface QuizResult {
   attemptId: string
@@ -48,7 +51,7 @@ export default function QuizResultsPage() {
           return
         }
 
-        const response = await fetch(`/api/quizzes/results/${attemptId}`)
+        const response = await fetch(`/api/quizzes/results/${attemptId}?lang=${language}`)
         if (response.ok) {
           const data = await response.json()
           console.log('🔍 Results: Loaded data:', data)
@@ -84,14 +87,16 @@ export default function QuizResultsPage() {
     if (quizSlug) {
       loadResults()
     }
-  }, [quizSlug])
+  }, [quizSlug, language])
 
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-orange-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500 mx-auto mb-4"></div>
-          <p className="text-slate-600 dark:text-slate-400">Lade Ergebnisse...</p>
+          <p className="text-slate-600 dark:text-slate-400">
+            {translations?.admin?.quizExecution?.loadingResults || 'Lade Ergebnisse...'}
+          </p>
         </div>
       </div>
     )
@@ -102,10 +107,10 @@ export default function QuizResultsPage() {
       <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-orange-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-2xl font-bold text-slate-900 dark:text-white mb-4">
-            Ergebnisse nicht gefunden
+            {translations?.admin?.quizExecution?.resultsNotFound || 'Ergebnisse nicht gefunden'}
           </h1>
           <p className="text-slate-600 dark:text-slate-400">
-            Die Quiz-Ergebnisse konnten nicht geladen werden.
+            {translations?.admin?.quizExecution?.resultsNotFoundDesc || 'Die Quiz-Ergebnisse konnten nicht geladen werden.'}
           </p>
         </div>
       </div>
@@ -145,11 +150,43 @@ export default function QuizResultsPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-orange-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
+      {/* Header */}
+      <header className="bg-white dark:bg-slate-800 shadow-sm border-b border-slate-200 dark:border-slate-700">
+        <div className="container mx-auto px-4 py-4">
+          <div className="flex items-center justify-between">
+            <Link href="/" className="flex items-center space-x-3">
+              <Image
+                src="/light-logo.svg"
+                alt="Quickpoll Logo"
+                width={40}
+                height={40}
+                className="dark:hidden"
+              />
+              <Image
+                src="/dark-logo.svg"
+                alt="Quickpoll Logo"
+                width={40}
+                height={40}
+                className="hidden dark:block"
+              />
+              <span className="text-xl font-bold text-slate-900 dark:text-white">
+                Quickpoll
+              </span>
+            </Link>
+            
+            <div className="flex items-center space-x-4">
+              <LanguageSwitcher />
+              <ThemeToggle />
+            </div>
+          </div>
+        </div>
+      </header>
+
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-4">
-            {translations?.admin?.quizExecution?.quizCompleted || 'Quiz abgeschlossen!'}
+            {translations?.admin?.quizExecution?.resultsTitle || 'Quiz abgeschlossen!'}
           </h1>
           <p className="text-lg text-slate-600 dark:text-slate-400">
             {result.quizTitle} • {formatDate(result.finishedAt)}
@@ -165,7 +202,7 @@ export default function QuizResultsPage() {
               </span>
             </div>
             <h2 className="text-2xl font-semibold text-slate-900 dark:text-white mb-2">
-              {result.score.correctAnswers} von {result.score.totalQuestions} richtig
+              {result.score.correctAnswers} {translations?.admin?.quizExecution?.of || 'von'} {result.score.totalQuestions} {translations?.admin?.quizExecution?.correct || 'richtig'}
             </h2>
             <p className="text-slate-600 dark:text-slate-400 text-lg">
               {getScoreMessage(result.score.score)}
@@ -176,7 +213,7 @@ export default function QuizResultsPage() {
         {/* Detailed Results */}
         <div className="max-w-4xl mx-auto">
           <h3 className="text-2xl font-bold text-slate-900 dark:text-white mb-6 text-center">
-            Detaillierte Auswertung
+            {translations?.admin?.quizExecution?.detailedEvaluation || 'Detaillierte Auswertung'}
           </h3>
           
           <div className="space-y-6">
@@ -191,7 +228,7 @@ export default function QuizResultsPage() {
               >
                 <div className="flex items-start justify-between mb-4">
                   <h4 className="text-lg font-semibold text-slate-900 dark:text-white flex-1">
-                    Frage {index + 1}
+                    {translations?.admin?.quizExecution?.question || 'Frage'} {index + 1}
                   </h4>
                   <div className="flex items-center space-x-2">
                     <div className={`px-3 py-1 rounded-full text-sm font-medium ${
@@ -199,10 +236,10 @@ export default function QuizResultsPage() {
                         ? 'bg-green-100 dark:bg-green-800 text-green-800 dark:text-green-200'
                         : 'bg-red-100 dark:bg-red-800 text-red-800 dark:text-red-200'
                     }`}>
-                      {answer.isCorrect ? '✓ Richtig' : '✗ Falsch'}
+                      {answer.isCorrect ? `✓ ${translations?.admin?.quizExecution?.correct || 'Richtig'}` : `✗ ${translations?.admin?.quizExecution?.incorrect || 'Falsch'}`}
                     </div>
                     <div className="text-sm text-slate-600 dark:text-slate-400">
-                      {answer.questionType === 'multiple' ? 'Mehrfachauswahl' : 'Einfachauswahl'}
+                      {answer.questionType === 'multiple' ? (translations?.admin?.quizExecution?.multipleChoice || 'Mehrfachauswahl') : (translations?.admin?.quizExecution?.singleChoice || 'Einfachauswahl')}
                     </div>
                   </div>
                 </div>
@@ -215,7 +252,7 @@ export default function QuizResultsPage() {
                   <div>
                     <h5 className="font-semibold text-slate-900 dark:text-white mb-3 flex items-center">
                       <span className="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>
-                      Deine Antwort:
+                      {translations?.admin?.quizExecution?.yourAnswer || 'Deine Antwort:'}:
                     </h5>
                     <div className="space-y-2">
                       {(() => {
@@ -250,7 +287,7 @@ export default function QuizResultsPage() {
                           ))
                         ) : (
                           <div className="p-3 bg-slate-100 dark:bg-slate-700 rounded-lg text-slate-500 dark:text-slate-400 italic">
-                            Keine Antwort ausgewählt
+                            {translations?.admin?.quizExecution?.noAnswerSelected || 'Keine Antwort ausgewählt'}
                           </div>
                         )
                       })()}
@@ -260,7 +297,7 @@ export default function QuizResultsPage() {
                   <div>
                     <h5 className="font-semibold text-slate-900 dark:text-white mb-3 flex items-center">
                       <span className="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
-                      Richtige Antwort:
+                      {translations?.admin?.quizExecution?.correctAnswer || 'Richtige Antwort:'}:
                     </h5>
                     <div className="space-y-2">
                       {(() => {
@@ -303,7 +340,7 @@ export default function QuizResultsPage() {
                           })
                         ) : (
                           <div className="p-3 bg-slate-100 dark:bg-slate-700 rounded-lg text-slate-500 dark:text-slate-400 italic">
-                            Keine korrekte Antwort definiert
+                            {translations?.admin?.quizExecution?.noCorrectAnswer || 'Keine korrekte Antwort definiert'}
                           </div>
                         )
                       })()}
@@ -319,7 +356,7 @@ export default function QuizResultsPage() {
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
                       <span className="text-sm font-medium">
-                        Mehrfachauswahl: Teilpunkte werden für richtige und falsche Antworten vergeben
+                        {translations?.admin?.quizExecution?.multipleChoiceHint || 'Mehrfachauswahl: Teilpunkte werden für richtige und falsche Antworten vergeben'}
                       </span>
                     </div>
                   </div>
@@ -336,13 +373,13 @@ export default function QuizResultsPage() {
               href={`/q/${quizSlug}/start`}
               className="px-6 py-3 bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-xl transition-colors duration-200"
             >
-              Quiz nochmal machen
+              {translations?.admin?.quizExecution?.retryQuiz || 'Quiz nochmal machen'}
             </Link>
             <Link
               href="/"
               className="px-6 py-3 bg-slate-500 hover:bg-slate-600 text-white font-semibold rounded-xl transition-colors duration-200"
             >
-              Zur Startseite
+              {translations?.admin?.quizExecution?.backToHome || 'Zur Startseite'}
             </Link>
           </div>
         </div>
