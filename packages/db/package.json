@@ -7,7 +7,7 @@
     "push": "prisma db push",
     "migrate": "prisma migrate dev",
     "studio": "prisma studio",
-    "seed": "tsx prisma/seed.ts"
+    "seed": "tsx prisma/seed.ts && node create-sample-question-stack.js"
   },
   "dependencies": {
     "@prisma/client": "^5.0.0",

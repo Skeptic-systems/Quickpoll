@@ -68,14 +68,18 @@ export async function POST(
         let selectedChoices = ''
 
         if (module.type === 'question') {
-          // Normale Quiz-Frage
+          // Normale Quiz-Frage (supports multilingual fields)
           const questionData = module.data
           if (!questionData) {
             console.error('❌ Quiz-Submit: Question data is null')
             continue
           }
           let correctAnswerTexts = (questionData as any).correctAnswers || []
-          const questionAnswers = (questionData as any).answers || []
+          // answers can be an array or an object with language keys
+          const rawAnswers = (questionData as any).answers || []
+          const questionAnswers = Array.isArray(rawAnswers)
+            ? rawAnswers
+            : (rawAnswers.de || rawAnswers.en || rawAnswers.fr || [])
           const questionType = (questionData as any).questionType || 'single'
 
           console.log(`🔍 Quiz-Submit: Question data:`, {
@@ -149,7 +153,24 @@ export async function POST(
             console.error('❌ Quiz-Submit: Random data is null')
             continue
           }
-          const usedQuestionId = (randomData as any).usedQuestionId
+          // support client sending object answer { selectedIndex | selectedIndices, usedQuestionId }
+          let usedQuestionId = (randomData as any).usedQuestionId
+          let userAnswerIndex: number | undefined = undefined
+          let userAnswerArray: number[] | undefined = undefined
+          if (userAnswer && typeof userAnswer === 'object') {
+            const ua: any = userAnswer
+            if (Array.isArray(ua.selectedIndices)) {
+              userAnswerArray = ua.selectedIndices as number[]
+            }
+            if (typeof ua.selectedIndex === 'number') {
+              userAnswerIndex = ua.selectedIndex as number
+            }
+            usedQuestionId = ua.usedQuestionId || usedQuestionId
+          } else if (Array.isArray(userAnswer)) {
+            userAnswerArray = userAnswer as number[]
+          } else if (typeof userAnswer === 'number') {
+            userAnswerIndex = userAnswer as number
+          }
           const stackId = (randomData as any).stackId
           
           console.log(`🔍 Quiz-Submit: Processing random question for stack ${stackId}, usedQuestionId: ${usedQuestionId}`)
@@ -237,13 +258,15 @@ export async function POST(
 
             if (questionType === 'single') {
               // Einfachauswahl
-              selectedChoices = JSON.stringify([userAnswer])
+              selectedChoices = JSON.stringify([userAnswerIndex])
               correctChoices = JSON.stringify(correctAnswerIndices)
-              isCorrect = correctAnswerIndices.includes(userAnswer)
+              isCorrect = typeof userAnswerIndex === 'number' && correctAnswerIndices.includes(userAnswerIndex)
               points = isCorrect ? 1 : 0
             } else {
               // Mehrfachauswahl - Teilpunkte
-              const userAnswers = Array.isArray(userAnswer) ? userAnswer : [userAnswer]
+              const userAnswers = Array.isArray(userAnswerArray) ? userAnswerArray : (
+                typeof userAnswerIndex === 'number' ? [userAnswerIndex] : []
+              )
               const correctSet = new Set(correctAnswerIndices)
               const userSet = new Set(userAnswers)
               
@@ -291,15 +314,28 @@ export async function POST(
         })
 
         // Answer Record für Datenbank erstellen
-        answerRecords.push({
+        const baseRecord: any = {
           attemptId: '', // wird später gesetzt
           moduleId: module.id,
           choiceIds: selectedChoices, // Für Backward Compatibility
           isCorrect,
           correctChoices,
           selectedChoices,
+          points,
           createdAt: new Date()
-        })
+        }
+
+        // Für randomQuestion zusätzlich die verwendete Frage speichern
+        if (module.type === 'randomQuestion') {
+          const randomData = module.data as any
+          if (answers[module.id] && typeof answers[module.id] === 'object') {
+            baseRecord.usedQuestionId = (answers[module.id] as any).usedQuestionId || (randomData && randomData.usedQuestionId) || null
+          } else if (randomData && randomData.usedQuestionId) {
+            baseRecord.usedQuestionId = randomData.usedQuestionId
+          }
+        }
+
+        answerRecords.push(baseRecord)
       }
     }
 

@@ -127,6 +127,14 @@
       "multipleChoiceHint": "Multiple Choice: Partial points are awarded for correct and incorrect answers",
       "retryQuiz": "Retry Quiz",
       "of": "of",
+      "scoreMessages": {
+        "excellent": "Excellent! 🏆",
+        "great": "Great! 🎉",
+        "veryGood": "Very good! 👍",
+        "good": "Well done! ✅",
+        "ok": "Not bad! 📚",
+        "keepPracticing": "Keep practicing! 💪"
+      },
       "notFound": {
         "title": "Quiz not found",
         "description": "The requested quiz could not be found.",

@@ -6,6 +6,10 @@ export async function GET(
   { params }: { params: { quizId: string } }
 ) {
   try {
+    // Language selection for display purposes
+    const url = new URL(request.url)
+    const langParam = (url.searchParams.get('lang') || 'de').toLowerCase()
+    const lang: 'de' | 'en' | 'fr' = ['de', 'en', 'fr'].includes(langParam) ? (langParam as any) : 'de'
     const { quizId } = params
 
     console.log('📊 Detailed Quiz-Stats: Fetching detailed stats for quiz:', quizId)
@@ -71,6 +75,36 @@ export async function GET(
     ).length
 
     // Process question statistics
+    const getTextInLanguage = (value: any): string => {
+      if (!value) return 'Unbekannte Frage'
+      if (typeof value === 'string') return value
+      if (typeof value === 'object' && value !== null) {
+        return value[lang] || value.de || value.en || value.fr || 'Unbekannte Frage'
+      }
+      return 'Unbekannte Frage'
+    }
+
+    const getAnswersInLanguage = (value: any): string[] => {
+      if (!value) return []
+      if (Array.isArray(value)) return value
+      if (typeof value === 'object' && value !== null) {
+        const arr = value[lang] || value.de || value.en || value.fr
+        return Array.isArray(arr) ? arr : []
+      }
+      return []
+    }
+
+    const safeParseArray = (raw: any): any[] => {
+      try {
+        if (Array.isArray(raw)) return raw
+        let parsed = typeof raw === 'string' ? JSON.parse(raw) : raw
+        if (typeof parsed === 'string') parsed = JSON.parse(parsed)
+        return Array.isArray(parsed) ? parsed : []
+      } catch {
+        return []
+      }
+    }
+
     const questionStats = await Promise.all(quiz.modules.map(async (module) => {
       console.log(`📊 Processing module: ${module.id}, type: ${module.type}`)
       
@@ -81,10 +115,10 @@ export async function GET(
 
       if (module.type === 'question') {
         const moduleData = module.data as any
-        questionText = moduleData.question || 'Unbekannte Frage'
-        questionAnswers = moduleData.answers || []
+        questionText = getTextInLanguage(moduleData.question)
+        questionAnswers = getAnswersInLanguage(moduleData.answers)
         questionType = moduleData.questionType || 'single'
-        correctAnswers = moduleData.correctAnswers || []
+        correctAnswers = Array.isArray(moduleData.correctAnswers) ? moduleData.correctAnswers : []
       } else if (module.type === 'randomQuestion') {
         const randomData = module.data as any
         const stackId = randomData.stackId
@@ -97,32 +131,24 @@ export async function GET(
           })
           
           if (stackQuestions.length > 0) {
-            const questionForDisplay = stackQuestions[0]
-            questionText = questionForDisplay.question || 'Zufällige Frage'
-            
-            try {
-              let parsedAnswers = JSON.parse(questionForDisplay.answers || '[]')
-              if (typeof parsedAnswers === 'string') {
-                parsedAnswers = JSON.parse(parsedAnswers)
-              }
-              questionAnswers = Array.isArray(parsedAnswers) ? parsedAnswers : []
-            } catch (error) {
-              console.error('Error parsing questionAnswers:', error)
-              questionAnswers = []
+            const q = stackQuestions[0] as any
+            // Language-aware text/answers
+            if (lang === 'en') {
+              questionText = q.questionEn || q.question || 'Zufällige Frage'
+              questionAnswers = safeParseArray(q.answersEn)
+            } else if (lang === 'fr') {
+              questionText = q.questionFr || q.question || 'Zufällige Frage'
+              questionAnswers = safeParseArray(q.answersFr)
+            } else {
+              questionText = q.question || 'Zufällige Frage'
+              questionAnswers = safeParseArray(q.answers)
             }
-            
-            questionType = questionForDisplay.questionType as 'single' | 'multiple' || 'single'
-            
-            try {
-              let parsedCorrectAnswers = JSON.parse(questionForDisplay.correctAnswers || '[]')
-              if (typeof parsedCorrectAnswers === 'string') {
-                parsedCorrectAnswers = JSON.parse(parsedCorrectAnswers)
-              }
-              correctAnswers = Array.isArray(parsedCorrectAnswers) ? parsedCorrectAnswers : []
-            } catch (error) {
-              console.error('Error parsing correctAnswers:', error)
-              correctAnswers = []
-            }
+
+            questionType = (q.questionType as 'single' | 'multiple') || 'single'
+
+            // correctAnswers stored as texts in stack; convert to texts for display
+            const parsedCorrect = safeParseArray(q.correctAnswers)
+            correctAnswers = parsedCorrect
           }
         }
       }
@@ -180,7 +206,8 @@ export async function GET(
         questionType,
         totalAnswers,
         answerCounts,
-        correctAnswers: correctAnswers.map(index => questionAnswers[parseInt(index)]).filter(Boolean),
+        // For normal modules, correctAnswers already texts; for random stacks, parsed above
+        correctAnswers,
         averageScore
       }
     }))

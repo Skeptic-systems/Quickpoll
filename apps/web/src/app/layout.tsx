@@ -8,6 +8,14 @@ const inter = Inter({ subsets: ['latin'] })
 export const metadata: Metadata = {
   title: 'QuickPoll',
   description: 'Mobile-optimierte Quiz-Webapp für Events und Umfragen',
+  icons: {
+    icon: [
+      { url: '/light-logo.svg', type: 'image/svg+xml' },
+    ],
+    shortcut: [
+      { url: '/light-logo.svg', type: 'image/svg+xml' },
+    ],
+  },
 }
 
 export default function RootLayout({

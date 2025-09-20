@@ -164,6 +164,8 @@ model Answer {
   isCorrect  Boolean  @default(false)
   correctChoices String // JSON stringified string[] - the correct answer choices
   selectedChoices String // JSON stringified string[] - what user actually selected
+  usedQuestionId String? // for randomQuestion modules: the concrete QuestionStackItem.id used
+  points     Float    @default(0.0) // fractional score for this question (0..1)
   createdAt  DateTime @default(now())
   
   Attempt Attempt @relation(fields: [attemptId], references: [id], onDelete: Cascade)

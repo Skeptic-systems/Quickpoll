@@ -272,6 +272,14 @@
       "multipleChoiceHint": "Mehrfachauswahl: Teilpunkte werden für richtige und falsche Antworten vergeben",
       "retryQuiz": "Quiz nochmal machen",
       "of": "von",
+      "scoreMessages": {
+        "excellent": "Hervorragend! 🏆",
+        "great": "Ausgezeichnet! 🎉",
+        "veryGood": "Sehr gut! 👍",
+        "good": "Gut gemacht! ✅",
+        "ok": "Nicht schlecht! 📚",
+        "keepPracticing": "Weiter üben! 💪"
+      },
       "notFound": {
         "title": "Quiz nicht gefunden",
         "description": "Das angeforderte Quiz konnte nicht gefunden werden.",

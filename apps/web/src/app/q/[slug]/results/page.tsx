@@ -130,6 +130,16 @@ export default function QuizResultsPage() {
   }
 
   const getScoreMessage = (score: number) => {
+    const msgs = (translations as any)?.admin?.quizExecution?.scoreMessages as any
+    if (msgs) {
+      if (score >= 90) return msgs.excellent
+      if (score >= 80) return msgs.great
+      if (score >= 70) return msgs.veryGood
+      if (score >= 60) return msgs.good
+      if (score >= 50) return msgs.ok
+      return msgs.keepPracticing
+    }
+    // Fallback German strings
     if (score >= 90) return 'Hervorragend! 🏆'
     if (score >= 80) return 'Ausgezeichnet! 🎉'
     if (score >= 70) return 'Sehr gut! 👍'
@@ -139,7 +149,8 @@ export default function QuizResultsPage() {
   }
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('de-DE', {
+    const locale = language === 'en' ? 'en-US' : language === 'fr' ? 'fr-FR' : 'de-DE'
+    return new Date(dateString).toLocaleDateString(locale, {
       year: 'numeric',
       month: 'long',
       day: 'numeric',

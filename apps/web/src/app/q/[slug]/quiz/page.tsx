@@ -94,40 +94,67 @@ const RandomQuestionModule = React.memo(({ module, answers, setAnswers }: {
           </h3>
           
           <div className="space-y-3">
-            {parsedAnswers.length > 0 ? parsedAnswers.map((answer: string, index: number) => (
-              <button
-                key={index}
-                onClick={() => {
-                  console.log('🖱️ RandomQuestion: Answer clicked:', { moduleId: module.id, answerIndex: index, answer })
+            {(() => {
+              const isMultiple = (randomQuestion?.questionType || 'single') === 'multiple'
+              const isSelected = (idx: number) => {
+                const value = answers[module.id]
+                if (isMultiple && value && Array.isArray(value.selectedIndices)) {
+                  return value.selectedIndices.includes(idx)
+                }
+                const selected = typeof value === 'object' ? value?.selectedIndex : value
+                return selected === idx
+              }
+              const toggle = (idx: number) => {
+                if (isMultiple) {
+                  setAnswers((prev: any) => {
+                    const existing = prev[module.id]?.selectedIndices || []
+                    const next = existing.includes(idx)
+                      ? existing.filter((i: number) => i !== idx)
+                      : [...existing, idx]
+                    return {
+                      ...prev,
+                      [module.id]: { selectedIndices: next, usedQuestionId: randomQuestion.id }
+                    }
+                  })
+                } else {
                   setAnswers((prev: any) => ({
                     ...prev,
-                    [module.id]: index
+                    [module.id]: { selectedIndex: idx, usedQuestionId: randomQuestion.id }
                   }))
-                }}
-                className={`w-full text-left p-4 rounded-xl transition-all duration-200 ${
-                  answers[module.id] === index
-                    ? 'bg-orange-100 dark:bg-orange-900/30 border-2 border-orange-400 dark:border-orange-500'
-                    : 'bg-white/60 dark:bg-slate-600/60 border-2 border-slate-200 dark:border-slate-500 hover:border-orange-300 dark:hover:border-orange-500'
-                }`}
-              >
-                <div className="flex items-center space-x-3">
-                  <div className={`w-5 h-5 border-2 rounded-full ${
-                    answers[module.id] === index
-                      ? 'border-orange-400 bg-orange-400'
-                      : 'border-slate-400 dark:border-slate-500'
-                  }`}>
-                    {answers[module.id] === index && (
-                      <div className="w-full h-full rounded-full bg-white scale-50"></div>
-                    )}
+                }
+              }
+              return parsedAnswers.length > 0 ? parsedAnswers.map((answer: string, index: number) => (
+                <button
+                  key={index}
+                  onClick={() => {
+                    console.log('🖱️ RandomQuestion: Answer clicked:', { moduleId: module.id, answerIndex: index, answer })
+                    toggle(index)
+                  }}
+                  className={`w-full text-left p-4 rounded-xl transition-all duration-200 ${
+                    isSelected(index)
+                      ? 'bg-orange-100 dark:bg-orange-900/30 border-2 border-orange-400 dark:border-orange-500'
+                      : 'bg-white/60 dark:bg-slate-600/60 border-2 border-slate-200 dark:border-slate-500 hover:border-orange-300 dark:hover:border-orange-500'
+                  }`}
+                >
+                  <div className="flex items-center space-x-3">
+                    <div className={`w-5 h-5 border-2 ${isMultiple ? 'rounded-md' : 'rounded-full'} ${
+                      isSelected(index)
+                        ? 'border-orange-400 bg-orange-400'
+                        : 'border-slate-400 dark:border-slate-500'
+                    }`}>
+                      {isSelected(index) && (
+                        <div className={`w-full h-full ${isMultiple ? 'rounded-sm' : 'rounded-full'} bg-white ${isMultiple ? '' : 'scale-50'}`}></div>
+                      )}
+                    </div>
+                    <span className="text-slate-700 dark:text-slate-300">{answer}</span>
                   </div>
-                  <span className="text-slate-700 dark:text-slate-300">{answer}</span>
-                </div>
-              </button>
-            )) : (
+                </button>
+              )) : (
               <div className="text-center text-slate-500 dark:text-slate-400 py-4">
                 Keine Antworten verfügbar
               </div>
-            )}
+            )
+            })()}
           </div>
         </div>
       </div>
@@ -442,7 +469,9 @@ export default function QuizExecutionPage() {
         const questionData = module.data
         const questionText = getTextInLanguage(questionData.question)
         const questionAnswers = getAnswersInLanguage(questionData.answers)
-        const selectedAnswerIndex = answers[module.id] // This is the selected answer index from state
+        const questionType = questionData.questionType || 'single'
+        const selectedAnswerIndex = answers[module.id] // single-choice index
+        const selectedIndices: number[] = Array.isArray(answers[module.id]) ? answers[module.id] : []
         
         console.log('🔍 Quiz: Rendering question module:', module.id)
         console.log('🔍 Quiz: Question text:', questionText)
@@ -457,33 +486,44 @@ export default function QuizExecutionPage() {
                 {questionText}
               </h3>
               <div className="space-y-3">
-                {questionAnswers.map((answer, index) => (
-                  <button
-                    key={index}
-                    onClick={() => {
-                      console.log('🖱️ Quiz: Answer clicked:', { moduleId: module.id, answerIndex: index, answer })
+                {questionAnswers.map((answer, index) => {
+                  const isMultiple = questionType === 'multiple'
+                  const isSelected = isMultiple ? selectedIndices.includes(index) : selectedAnswerIndex === index
+                  const onClick = () => {
+                    console.log('🖱️ Quiz: Answer clicked:', { moduleId: module.id, answerIndex: index, answer })
+                    if (isMultiple) {
+                      setAnswers(prev => {
+                        const current: number[] = Array.isArray(prev[module.id]) ? prev[module.id] : []
+                        const next = current.includes(index) ? current.filter(i => i !== index) : [...current, index]
+                        return { ...prev, [module.id]: next }
+                      })
+                    } else {
                       handleAnswerSelect(module.id, index)
-                    }}
-                    className={`w-full text-left p-4 rounded-xl transition-all duration-200 ${
-                      selectedAnswerIndex === index
-                        ? 'bg-orange-100 dark:bg-orange-900/30 border-2 border-orange-400 dark:border-orange-500'
-                        : 'bg-white/60 dark:bg-slate-600/60 border-2 border-slate-200 dark:border-slate-500 hover:border-orange-300 dark:hover:border-orange-500'
-                    }`}
-                  >
-                    <div className="flex items-center space-x-3">
-                      <div className={`w-5 h-5 border-2 rounded-full ${
-                        selectedAnswerIndex === index
-                          ? 'border-orange-400 bg-orange-400'
-                          : 'border-slate-400 dark:border-slate-500'
-                      }`}>
-                        {selectedAnswerIndex === index && (
-                          <div className="w-full h-full rounded-full bg-white scale-50"></div>
-                        )}
+                    }
+                  }
+                  return (
+                    <button
+                      key={index}
+                      onClick={onClick}
+                      className={`w-full text-left p-4 rounded-xl transition-all duration-200 ${
+                        isSelected
+                          ? 'bg-orange-100 dark:bg-orange-900/30 border-2 border-orange-400 dark:border-orange-500'
+                          : 'bg-white/60 dark:bg-slate-600/60 border-2 border-slate-200 dark:border-slate-500 hover:border-orange-300 dark:hover:border-orange-500'
+                      }`}
+                    >
+                      <div className="flex items-center space-x-3">
+                        <div className={`w-5 h-5 border-2 ${isMultiple ? 'rounded-md' : 'rounded-full'} ${
+                          isSelected ? 'border-orange-400 bg-orange-400' : 'border-slate-400 dark:border-slate-500'
+                        }`}>
+                          {isSelected && (
+                            <div className={`w-full h-full ${isMultiple ? 'rounded-sm' : 'rounded-full'} bg-white ${isMultiple ? '' : 'scale-50'}`}></div>
+                          )}
+                        </div>
+                        <span className="text-slate-700 dark:text-slate-300">{answer}</span>
                       </div>
-                      <span className="text-slate-700 dark:text-slate-300">{answer}</span>
-                    </div>
-                  </button>
-                ))}
+                    </button>
+                  )
+                })}
               </div>
             </div>
           </div>

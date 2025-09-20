@@ -6,6 +6,11 @@ export async function GET(
   { params }: { params: { attemptId: string } }
 ) {
   try {
+    // Read desired language from query (default to 'de')
+    const url = new URL(request.url)
+    const langParam = (url.searchParams.get('lang') || 'de').toLowerCase()
+    const lang: 'de' | 'en' | 'fr' = ['de', 'en', 'fr'].includes(langParam) ? (langParam as any) : 'de'
+
     const { attemptId } = params
 
     console.log('🔍 Quiz-Results: Starting with attemptId:', attemptId)
@@ -66,6 +71,37 @@ export async function GET(
 
     console.log('✅ Quiz-Results: Attempt found, processing answers')
 
+    // Helpers to normalize multilingual fields
+    const getTextInLanguage = (value: any): string => {
+      if (!value) return 'Unbekannte Frage'
+      if (typeof value === 'string') return value
+      if (typeof value === 'object' && value !== null) {
+        return value[lang] || value.de || value.en || value.fr || 'Unbekannte Frage'
+      }
+      return 'Unbekannte Frage'
+    }
+
+    const getAnswersInLanguage = (value: any): string[] => {
+      if (!value) return []
+      if (Array.isArray(value)) return value
+      if (typeof value === 'object' && value !== null) {
+        const arr = value[lang] || value.de || value.en || value.fr
+        return Array.isArray(arr) ? arr : []
+      }
+      return []
+    }
+
+    const safeParseArray = (raw: any): any[] => {
+      try {
+        if (Array.isArray(raw)) return raw
+        let parsed = typeof raw === 'string' ? JSON.parse(raw) : raw
+        if (typeof parsed === 'string') parsed = JSON.parse(parsed)
+        return Array.isArray(parsed) ? parsed : []
+      } catch {
+        return []
+      }
+    }
+
     // Antworten mit Fragen verknüpfen
     const answersWithQuestions = await Promise.all(attempt.answers.map(async (answer, index) => {
       console.log(`🔍 Quiz-Results: Processing answer ${index + 1}/${attempt.answers.length}`)
@@ -74,7 +110,7 @@ export async function GET(
       const module = attempt.Quiz.modules.find(m => m.id === answer.moduleId)
       console.log(`🔍 Quiz-Results: Found module:`, module)
       
-      let questionText = 'Unbekannte Frage'
+      let questionText: string = 'Unbekannte Frage'
       let questionAnswers: string[] = []
       let questionType = 'single'
       
@@ -82,10 +118,10 @@ export async function GET(
         console.log(`🔍 Quiz-Results: Processing normal question module`)
         console.log(`🔍 Quiz-Results: Module data:`, module.data)
         const moduleData = module.data as any
-        
-        // Für normale Fragen: Daten direkt aus dem Module
-        questionText = moduleData.question || 'Unbekannte Frage'
-        questionAnswers = moduleData.answers || []
+
+        // Für normale Fragen: Daten direkt aus dem Module (multilingual unterstützt)
+        questionText = getTextInLanguage(moduleData.question)
+        questionAnswers = getAnswersInLanguage(moduleData.answers)
         questionType = moduleData.questionType || 'single'
         
         console.log(`🔍 Quiz-Results: Normal question data:`, {
@@ -97,44 +133,74 @@ export async function GET(
         } else if (module && module.type === 'randomQuestion') {
           console.log(`🔍 Quiz-Results: Processing random question module`)
           const randomData = module.data as any
-          const usedQuestionId = randomData.usedQuestionId
+          // Präferenz: aus gespeicherter Answer.usedQuestionId lesen
+          const usedQuestionId = (answer as any).usedQuestionId || randomData.usedQuestionId
           const stackId = randomData.stackId
           
           console.log('🔍 Quiz-Results: Random question data:', { usedQuestionId, stackId, randomData })
           
-          // Da usedQuestionId nicht gespeichert wird, hole alle Fragen aus dem Stack
-          console.log(`🔍 Quiz-Results: Loading all questions from stack: ${stackId}`)
-          if (stackId) {
+          const pickAnswersWithFallback = (q: any): string[] => {
+            const tryParse = (raw: any): string[] => {
+              try {
+                if (Array.isArray(raw)) return raw
+                if (typeof raw === 'string') {
+                  const parsed = JSON.parse(raw)
+                  return Array.isArray(parsed) ? parsed : []
+                }
+              } catch {}
+              return []
+            }
+            if (lang === 'en') {
+              const en = tryParse(q.answersEn)
+              return en.length ? en : tryParse(q.answers)
+            }
+            if (lang === 'fr') {
+              const fr = tryParse(q.answersFr)
+              return fr.length ? fr : tryParse(q.answers)
+            }
+            return tryParse(q.answers)
+          }
+
+          if (usedQuestionId) {
+            // gezielte Frage laden
+            const q = await prisma.questionStackItem.findUnique({ where: { id: usedQuestionId } })
+            if (q) {
+              const questionForDisplay: any = q
+              if (lang === 'en') {
+                questionText = questionForDisplay.questionEn || questionForDisplay.question || 'Random question'
+                const enAnswers = safeParseArray(questionForDisplay.answersEn)
+                questionAnswers = enAnswers.length ? enAnswers : safeParseArray(questionForDisplay.answers)
+              } else if (lang === 'fr') {
+                questionText = questionForDisplay.questionFr || questionForDisplay.question || 'Question aléatoire'
+                const frAnswers = safeParseArray(questionForDisplay.answersFr)
+                questionAnswers = frAnswers.length ? frAnswers : safeParseArray(questionForDisplay.answers)
+              } else {
+                questionText = questionForDisplay.question || 'Zufällige Frage'
+                questionAnswers = safeParseArray(questionForDisplay.answers)
+              }
+              questionType = questionForDisplay.questionType || 'single'
+            }
+          } else if (stackId) {
+            // Fallback: erste Frage aus dem Stapel
             const stackQuestions = await prisma.questionStackItem.findMany({
               where: { stackId },
               orderBy: { order: 'asc' }
             })
-            console.log(`🔍 Quiz-Results: Stack questions found:`, stackQuestions)
-            
             if (stackQuestions.length > 0) {
-              // Verwende die erste Frage als Fallback (da usedQuestionId nicht verfügbar ist)
-              const questionForDisplay = stackQuestions[0]
-              questionText = questionForDisplay.question || 'Zufällige Frage'
-              
-              // Parse questionAnswers with robust handling
-              try {
-                let parsedAnswers = JSON.parse(questionForDisplay.answers || '[]')
-                // Handle double-escaped JSON
-                if (typeof parsedAnswers === 'string') {
-                  parsedAnswers = JSON.parse(parsedAnswers)
-                }
-                questionAnswers = Array.isArray(parsedAnswers) ? parsedAnswers : []
-              } catch (error) {
-                console.error('Error parsing questionAnswers:', error, questionForDisplay.answers)
-                questionAnswers = []
+              const questionForDisplay: any = stackQuestions[0]
+              if (lang === 'en') {
+                questionText = questionForDisplay.questionEn || questionForDisplay.question || 'Random question'
+                const enAnswers = safeParseArray(questionForDisplay.answersEn)
+                questionAnswers = enAnswers.length ? enAnswers : safeParseArray(questionForDisplay.answers)
+              } else if (lang === 'fr') {
+                questionText = questionForDisplay.questionFr || questionForDisplay.question || 'Question aléatoire'
+                const frAnswers = safeParseArray(questionForDisplay.answersFr)
+                questionAnswers = frAnswers.length ? frAnswers : safeParseArray(questionForDisplay.answers)
+              } else {
+                questionText = questionForDisplay.question || 'Zufällige Frage'
+                questionAnswers = safeParseArray(questionForDisplay.answers)
               }
-              
               questionType = questionForDisplay.questionType || 'single'
-              console.log('🔍 Quiz-Results: Using question for display:', {
-                questionText,
-                questionAnswers,
-                questionType
-              })
             }
           }
         } else {
@@ -198,7 +264,7 @@ export async function GET(
         selectedChoices: parsedSelectedChoices,
         correctChoices: parsedCorrectChoices,
         isCorrect: answer.isCorrect,
-        points: answer.isCorrect ? 1 : 0
+        points: typeof (answer as any).points === 'number' ? (answer as any).points : (answer.isCorrect ? 1 : 0)
       }
 
       console.log('🔍 Quiz-Results: Final result for answer:', result)

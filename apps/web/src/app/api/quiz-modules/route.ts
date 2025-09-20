@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { auth } from '@/lib/auth'
 import { revalidatePath, revalidateTag } from 'next/cache'
+import { translateModulesArray } from '@/lib/translation'
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
@@ -47,22 +48,7 @@ export async function POST(request: NextRequest) {
 
     // Translate modules first
     console.log('Translating modules for update...')
-    const origin = request.headers.get('origin') || `https://${request.headers.get('host')}`
-    const translateResponse = await fetch(`${origin}/api/translate-modules`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ modules })
-    })
-
-    if (!translateResponse.ok) {
-      console.error('Translation failed, using original data')
-    }
-
-    const translatedModules = translateResponse.ok 
-      ? (await translateResponse.json()).translatedModules 
-      : modules
+    const translatedModules = await translateModulesArray(modules)
 
     // Delete existing modules
     await prisma.quizModule.deleteMany({
