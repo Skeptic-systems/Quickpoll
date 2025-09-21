@@ -17,6 +17,21 @@ on:
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mariadb:10.11
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: test
+          MYSQL_USER: test
+          MYSQL_PASSWORD: test
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd "mariadb-admin ping -h 127.0.0.1 -uroot -proot"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 10
     
     strategy:
       matrix:
@@ -58,12 +73,24 @@ jobs:
           echo "No lockfile found, installing without frozen lockfile"
           pnpm install --no-frozen-lockfile
         fi
-      
-    - name: Generate Prisma client
-      run: pnpm db:generate
+    
+    - name: Prepare environment file
+      run: cp ./apps/web/env.example ./apps/web/.env
+
+    - name: Wait for database
+      shell: bash
+      run: |
+        for i in {1..30}; do
+          (echo > /dev/tcp/127.0.0.1/3306) >/dev/null 2>&1 && break
+          echo "Waiting for database..."
+          sleep 2
+        done
+
+    - name: Push database schema
+      run: pnpm db:push
       env:
         BETTER_AUTH_SECRET: "ci-test-secret-key-for-build-only"
-        DATABASE_URL: "mysql://test:test@localhost:3306/test"
+        DATABASE_URL: "mysql://test:test@127.0.0.1:3306/test"
       
     - name: Build UI package
       run: pnpm --filter @quickpoll/ui build
