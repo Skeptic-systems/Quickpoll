@@ -6,7 +6,11 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "prisma:push": "dotenv -e .env -- pnpm exec prisma db push --schema ../../packages/db/schema.prisma",
+    "prisma:migrate": "dotenv -e .env -- pnpm exec prisma migrate dev --schema ../../packages/db/schema.prisma",
+    "prisma:studio": "dotenv -e .env -- pnpm exec prisma studio --schema ../../packages/db/schema.prisma",
+    "prisma:seed": "dotenv -e .env -- pnpm --filter db run seed"
   },
   "dependencies": {
     "@next/font": "^14.0.0",
@@ -42,6 +46,7 @@
     "@types/react": "^18.2.0",
     "@types/react-dom": "^18.2.0",
     "autoprefixer": "^10.4.0",
+    "dotenv-cli": "^10.0.0",
     "eslint": "^8.0.0",
     "eslint-config-next": "14.0.0",
     "postcss": "^8.4.0",
