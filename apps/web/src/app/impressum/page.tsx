@@ -4,18 +4,42 @@ import { Button } from '@/components/ui'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { LanguageSwitcher } from '@/components/language-switcher'
 import Link from 'next/link'
+import Image from 'next/image'
+import { useApp } from '@/components/app-provider'
 
 export default function ImpressumPage() {
+  const { translations } = useApp()
+  if (!translations) return null
+
+  const provider = translations.impressum.provider
+  const contact = translations.impressum.contact
+  const responsible = translations.impressum.responsible
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 to-orange-100 dark:from-slate-900 dark:to-slate-800">
+    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-orange-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
       {/* Header */}
-      <header className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm border-b border-orange-200 dark:border-slate-700">
+      <header className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm border-b border-orange-200/50 dark:border-slate-700/50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-4">
               <Link href="/" className="flex items-center space-x-2">
-                <img src="/logo.png" alt="Quickpoll" className="h-8 w-8" />
-                <h1 className="text-xl font-bold text-orange-600 dark:text-orange-400">Quickpoll</h1>
+                <Image
+                  src="/light-logo.svg"
+                  alt="Quickpoll Logo"
+                  width={32}
+                  height={32}
+                  className="dark:hidden"
+                />
+                <Image
+                  src="/dark-logo.svg"
+                  alt="Quickpoll Logo"
+                  width={32}
+                  height={32}
+                  className="hidden dark:block"
+                />
+                <span className="text-xl font-bold text-slate-900 dark:text-white">
+                  {translations.common.quickpoll}
+                </span>
               </Link>
             </div>
             <div className="flex items-center space-x-4">
@@ -30,67 +54,66 @@ export default function ImpressumPage() {
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-8">
           <h1 className="text-3xl font-bold text-slate-900 dark:text-white mb-8">
-            Impressum
+            {translations.impressum.title}
           </h1>
 
           <div className="prose dark:prose-invert max-w-none">
             <section className="mb-8">
               <h2 className="text-xl font-semibold text-slate-900 dark:text-white mb-4">
-                Angaben gemäß § 5 TMG
+                {provider.title}
               </h2>
               <div className="text-slate-600 dark:text-slate-400 space-y-2">
-                <p>Quickpoll</p>
-                <p>Musterstraße 123</p>
-                <p>12345 Musterstadt</p>
-                <p>Deutschland</p>
+                <p>{provider.name}</p>
+                <p>{provider.address}</p>
+                <p>{provider.city}</p>
+                <p>{provider.country}</p>
               </div>
             </section>
 
             <section className="mb-8">
               <h2 className="text-xl font-semibold text-slate-900 dark:text-white mb-4">
-                Kontakt
+                {contact.title}
               </h2>
               <div className="text-slate-600 dark:text-slate-400 space-y-2">
-                <p>E-Mail: info@quickpoll.de</p>
-                <p>Telefon: +49 (0) 123 456789</p>
+                <p>{contact.email}</p>
               </div>
             </section>
 
             <section className="mb-8">
               <h2 className="text-xl font-semibold text-slate-900 dark:text-white mb-4">
-                Verantwortlich für den Inhalt nach § 55 Abs. 2 RStV
+                {responsible.title}
               </h2>
               <div className="text-slate-600 dark:text-slate-400 space-y-2">
-                <p>Quickpoll</p>
-                <p>Musterstraße 123</p>
-                <p>12345 Musterstadt</p>
+                <p>{responsible.name}</p>
+                <p>{responsible.address}</p>
+                <p>{responsible.city}</p>
               </div>
             </section>
 
             <section className="mb-8">
               <h2 className="text-xl font-semibold text-slate-900 dark:text-white mb-4">
-                Haftungsausschluss
+                {translations.impressum.disclaimer.title}
               </h2>
               <div className="text-slate-600 dark:text-slate-400 space-y-2">
-                <p>Die Inhalte unserer Seiten wurden mit größter Sorgfalt erstellt. Für die Richtigkeit, Vollständigkeit und Aktualität der Inhalte können wir jedoch keine Gewähr übernehmen.</p>
+                <p>{translations.impressum.disclaimer.content}</p>
               </div>
             </section>
 
             <section className="mb-8">
               <h2 className="text-xl font-semibold text-slate-900 dark:text-white mb-4">
-                Urheberrecht
+                {translations.impressum.license?.title || 'Lizenz'}
               </h2>
               <div className="text-slate-600 dark:text-slate-400 space-y-2">
-                <p>Die durch die Seitenbetreiber erstellten Inhalte und Werke auf diesen Seiten unterliegen dem deutschen Urheberrecht.</p>
+                <p>{translations.impressum.license?.content || 'Dieses Projekt ist Open Source (GPLv3).'}</p>
               </div>
             </section>
           </div>
 
           <div className="mt-8 pt-8 border-t border-slate-200 dark:border-slate-700">
             <Link href="/">
-              <Button variant="outline" className="text-orange-600 border-orange-200 hover:bg-orange-50 dark:hover:bg-orange-900/20">
-                Zurück zur Startseite
-              </Button>
+              <span className="px-6 py-2 inline-flex bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-medium rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+                {translations.admin.header.backToHome}
+              </span>
             </Link>
           </div>
         </div>

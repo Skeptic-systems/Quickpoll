@@ -2,6 +2,7 @@
   "common": {
     "quickpoll": "VDMA QuickPoll",
     "login": "Connexion",
+    "openSource": "Cette application est open source",
     "copyright": "© 2025 Skeptic Systems. Tous droits réservés.",
     "poweredBy": "Alimenté par l'IA",
     "poweredByDescription": "Sondages intelligents avec support IA pour des résultats optimaux",
@@ -41,6 +42,7 @@
   },
   "datenschutz": {
     "title": "Politique de confidentialité",
+    "summary": "Nous ne collectons, n'enregistrons ni ne traitons aucune donnée personnelle. Aucun suivi ni profilage n'est effectué.",
     "lastUpdated": "Dernière mise à jour : janvier 2025",
     "intro": "La protection de vos données personnelles est importante pour nous. Cette politique de confidentialité vous informe sur la nature, la portée et l'objectif du traitement des données personnelles par notre application QuickPoll.",
     "dataController": {
@@ -63,26 +65,29 @@
   "impressum": {
     "title": "Mentions légales",
     "provider": {
-      "title": "Fournisseur",
-      "name": "Skeptic Systems",
-      "address": "Rue Exemple 123",
-      "city": "12345 Ville Exemple",
+      "title": "Informations conformément au § 5 TMG",
+      "name": "Skeptic Systems / Jonas Vieth",
+      "address": "Wienerstraße 25",
+      "city": "91056 Erlangen",
       "country": "Allemagne"
     },
     "contact": {
       "title": "Contact",
-      "email": "E-mail : info@skeptic-systems.de",
-      "phone": "Téléphone : +49 (0) 123 456789"
+      "email": "E-mail : mail@jonas-vieth.de"
     },
     "responsible": {
-      "title": "Responsable du contenu",
-      "name": "Max Mustermann",
-      "address": "Rue Exemple 123",
-      "city": "12345 Ville Exemple"
+      "title": "Responsable du contenu (article 55, paragraphe 2, RStV)",
+      "name": "Jonas Vieth",
+      "address": "Wienerstraße 25",
+      "city": "91056 Erlangen"
     },
     "disclaimer": {
       "title": "Avertissement",
-      "content": "Le contenu de nos pages a été créé avec le plus grand soin. Cependant, nous ne pouvons garantir l'exactitude, l'exhaustivité et l'actualité du contenu."
+      "content": "Le contenu de ces pages a été créé avec le plus grand soin. Toutefois, nous ne pouvons garantir l'exactitude, l'exhaustivité et l'actualité du contenu."
+    },
+    "license": {
+      "title": "Licence",
+      "content": "Ce projet est open source et est sous licence GNU General Public License v3.0 (GPLv3)."
     }
   },
   "admin": {

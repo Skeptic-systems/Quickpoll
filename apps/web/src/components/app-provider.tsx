@@ -14,6 +14,7 @@ interface Translations {
     datenschutz: string
     poweredBy: string
     poweredByDescription: string
+    openSource: string
   }
   language: string
   home: {
@@ -49,6 +50,7 @@ interface Translations {
   }
   datenschutz: {
     title: string
+    summary: string
     lastUpdated: string
     intro: string
     dataController: {
@@ -89,6 +91,10 @@ interface Translations {
       city: string
     }
     disclaimer: {
+      title: string
+      content: string
+    }
+    license: {
       title: string
       content: string
     }
@@ -367,7 +373,8 @@ export function AppProvider({ children }: AppProviderProps) {
       poweredBy: "Unterstützt von KI",
       poweredByDescription: "Intelligente Umfragen mit KI-Unterstützung für optimale Ergebnisse",
       impressum: "Impressum",
-      datenschutz: "Datenschutz"
+      datenschutz: "Datenschutz",
+      openSource: "Diese App ist Open Source"
     },
     language: "de",
     home: {
@@ -403,6 +410,7 @@ export function AppProvider({ children }: AppProviderProps) {
     },
     datenschutz: {
       title: "Datenschutzerklärung",
+      summary: "Wir erheben, speichern oder verarbeiten keine personenbezogenen Daten. Es findet kein Tracking oder Profiling statt.",
       lastUpdated: "Letzte Aktualisierung: 1. Januar 2025",
       intro: "Diese Datenschutzerklärung informiert Sie über die Verarbeitung personenbezogener Daten bei der Nutzung unserer Website.",
       dataController: {
@@ -433,7 +441,7 @@ export function AppProvider({ children }: AppProviderProps) {
       },
       contact: {
         title: "Kontakt",
-        email: "info@skeptic-systems.de",
+        email: "mail@jonas-vieth.de",
         phone: "+49 123 456789"
       },
       responsible: {
@@ -445,6 +453,10 @@ export function AppProvider({ children }: AppProviderProps) {
       disclaimer: {
         title: "Haftungsausschluss",
         content: "Die Inhalte dieser Website werden mit größtmöglicher Sorgfalt erstellt. Für die Richtigkeit, Vollständigkeit und Aktualität der Inhalte können wir jedoch keine Gewähr übernehmen."
+      },
+      license: {
+        title: "Lizenz",
+        content: "Dieses Projekt ist Open Source und steht unter der GNU General Public License v3.0 (GPLv3)."
       }
     },
     admin: {

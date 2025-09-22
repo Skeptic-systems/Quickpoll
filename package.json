@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "pnpm --filter web dev",
     "build": "pnpm --filter web build",
-    "start": "pm2 start ecosystem.config.js --env production",
+    "start": "pnpm --filter web start",
     "db:push": "pnpm --filter web prisma:push",
     "db:studio": "pnpm --filter web prisma:studio",
     "db:seed": "pnpm --filter web prisma:seed",

@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "pm2 start ../../ecosystem.config.js --env production",
+    "start": "next start",
     "lint": "next lint",
     "prisma:push": "dotenv -e .env -- pnpm exec prisma db push --schema ../../packages/db/schema.prisma",
     "prisma:migrate": "dotenv -e .env -- pnpm exec prisma migrate dev --schema ../../packages/db/schema.prisma",

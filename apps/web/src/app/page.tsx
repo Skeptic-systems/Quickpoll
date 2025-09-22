@@ -22,6 +22,7 @@ interface Quiz {
 export default function LandingPage() {
   const [quizzes, setQuizzes] = useState<Quiz[]>([])
   const [isLoading, setIsLoading] = useState(true)
+  const [quizQuestionCounts, setQuizQuestionCounts] = useState<Record<string, number>>({})
   const { translations, language } = useApp()
 
   // Debug logging
@@ -47,6 +48,39 @@ export default function LandingPage() {
 
     fetchQuizzes()
   }, [])
+
+  // Compute number of question/randomQuestion modules per quiz for display
+  useEffect(() => {
+    if (!quizzes || quizzes.length === 0) return
+    let cancelled = false
+    const load = async () => {
+      try {
+        const pairs = await Promise.all(
+          quizzes.map(async (q) => {
+            try {
+              const res = await fetch(`/api/quiz-modules?quizId=${q.id}`)
+              if (!res.ok) return [q.id, undefined] as const
+              const modules = await res.json()
+              const count = Array.isArray(modules)
+                ? modules.reduce((acc: number, m: any) => acc + ((m?.type === 'question' || m?.type === 'randomQuestion') ? 1 : 0), 0)
+                : undefined
+              return [q.id, count] as const
+            } catch {
+              return [q.id, undefined] as const
+            }
+          })
+        )
+        if (cancelled) return
+        const map: Record<string, number> = {}
+        for (const [id, c] of pairs) if (typeof c === 'number') map[id] = c
+        setQuizQuestionCounts(map)
+      } catch {
+        // ignore
+      }
+    }
+    load()
+    return () => { cancelled = true }
+  }, [quizzes])
 
   if (!translations) {
     return (
@@ -112,7 +146,7 @@ export default function LandingPage() {
                         {quiz.title}
                       </h3>
                       <p className="text-slate-600 dark:text-slate-400 text-base mb-6">
-                        {quiz._count.questions} {translations?.home?.questions || "Fragen"} • {quiz.questionsPerRun} {translations?.home?.perRun || "pro Durchlauf"}
+                        {(quizQuestionCounts[quiz.id] ?? quiz._count.questions)} {translations?.home?.questions || "Fragen"} • {translations?.home?.perRun || "pro Durchlauf"}
                       </p>
                       <div className="flex items-center text-orange-600 dark:text-orange-400 text-base font-medium group-hover:translate-x-2 transition-transform">
                         {translations?.home?.startQuiz || "Quiz starten"}

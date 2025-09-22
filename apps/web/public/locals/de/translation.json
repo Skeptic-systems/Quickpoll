@@ -2,6 +2,7 @@
   "common": {
     "quickpoll": "VDMA QuickPoll",
     "login": "Anmelden",
+    "openSource": "Diese App ist Open Source",
     "copyright": "© 2025 Skeptic Systems. Alle Rechte vorbehalten.",
     "poweredBy": "Unterstützt von KI",
     "poweredByDescription": "Intelligente Umfragen mit KI-Unterstützung für optimale Ergebnisse",
@@ -40,49 +41,53 @@
     }
   },
   "datenschutz": {
-    "title": "Privacy Policy",
+    "title": "Datenschutzerklärung",
+    "summary": "Wir erheben, speichern oder verarbeiten keine personenbezogenen Daten. Es findet kein Tracking oder Profiling statt.",
     "lastUpdated": "Last updated: January 2025",
-    "intro": "The protection of your personal data is important to us. This privacy policy informs you about the nature, scope and purpose of the processing of personal data by our QuickPoll application.",
+    "intro": "Der Schutz Ihrer persönlichen Daten ist uns wichtig. Diese Datenschutzerklärung informiert Sie über Art, Umfang und Zweck der Verarbeitung personenbezogener Daten.",
     "dataController": {
-      "title": "Data Controller",
-      "content": "The data controller is Skeptic Systems. For questions about data protection, you can contact us via email."
+      "title": "Verantwortlicher",
+      "content": "Verantwortlich ist Skeptic Systems. Bei Fragen zum Datenschutz erreichen Sie uns per E-Mail."
     },
     "dataProcessing": {
-      "title": "Data Processing",
-      "content": "QuickPoll processes data exclusively for conducting surveys and quizzes. No personal data is stored unless you explicitly provide it."
+      "title": "Datenverarbeitung",
+      "content": "Quickpoll verarbeitet ausschließlich technisch notwendige Daten für den Betrieb. Es werden keine personenbezogenen Daten gespeichert."
     },
     "cookies": {
       "title": "Cookies",
-      "content": "We use technically necessary cookies for the functionality of the application. These cannot be disabled."
+      "content": "Wir verwenden nur technisch notwendige Informationen für die Funktionsfähigkeit."
     },
     "rights": {
-      "title": "Your Rights",
-      "content": "You have the right to information, correction, deletion and objection regarding your personal data."
+      "title": "Ihre Rechte",
+      "content": "Da keine personenbezogenen Daten verarbeitet werden, entfallen diesbezügliche Betroffenenrechte in diesem Kontext."
     }
   },
   "impressum": {
-    "title": "Imprint",
+    "title": "Impressum",
     "provider": {
-      "title": "Provider",
-      "name": "Skeptic Systems",
-      "address": "Sample Street 123",
-      "city": "12345 Sample City",
-      "country": "Germany"
+      "title": "Angaben gemäß § 5 TMG",
+      "name": "Skeptic Systems / Jonas Vieth",
+      "address": "Wienerstraße 25",
+      "city": "91056 Erlangen",
+      "country": "Deutschland"
     },
     "contact": {
-      "title": "Contact",
-      "email": "Email: info@skeptic-systems.de",
-      "phone": "Phone: +49 (0) 123 456789"
+      "title": "Kontakt",
+      "email": "E-Mail: mail@jonas-vieth.de"
     },
     "responsible": {
-      "title": "Responsible for Content",
-      "name": "Max Mustermann",
-      "address": "Sample Street 123",
-      "city": "12345 Sample City"
+      "title": "Verantwortlich für den Inhalt (§ 55 Abs. 2 RStV)",
+      "name": "Jonas Vieth",
+      "address": "Wienerstraße 25",
+      "city": "91056 Erlangen"
     },
     "disclaimer": {
-      "title": "Disclaimer",
-      "content": "The contents of our pages have been created with the greatest care. However, we cannot guarantee the accuracy, completeness and timeliness of the content."
+      "title": "Haftungsausschluss",
+      "content": "Die Inhalte dieser Seiten wurden mit größter Sorgfalt erstellt. Für die Richtigkeit, Vollständigkeit und Aktualität der Inhalte können wir jedoch keine Gewähr übernehmen."
+    },
+    "license": {
+      "title": "Lizenz",
+      "content": "Dieses Projekt ist Open Source und steht unter der GNU General Public License v3.0 (GPLv3)."
     }
   },
   "admin": {

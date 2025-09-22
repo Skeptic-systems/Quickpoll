@@ -2,6 +2,7 @@
   "common": {
     "quickpoll": "VDMA QuickPoll",
     "login": "Login",
+    "openSource": "This app is open source",
     "adminLogin": "Login",
     "start": "Start",
     "results": "Results",
@@ -32,7 +33,7 @@
   "features": {
     "anonymous": {
       "title": "Anonymous",
-      "description": "No registration required.<br />Privacy comes first."
+      "description": "No registration required. Privacy comes first."
     },
     "oneQuestion": {
       "title": "1 Question per Page",
@@ -40,7 +41,7 @@
     },
     "qrStart": {
       "title": "QR Start",
-      "description": "Easy access via QR code.<br />Perfect for events and presentations."
+      "description": "Easy access via QR code. Perfect for events and presentations."
     }
   },
   "quizzes": {
@@ -59,6 +60,7 @@
   },
   "datenschutz": {
     "title": "Privacy Policy",
+    "summary": "We do not collect, store, or process any personal data. No tracking or profiling is performed.",
     "lastUpdated": "Last updated: January 2025",
     "intro": "The protection of your personal data is important to us. This privacy policy informs you about the nature, scope and purpose of the processing of personal data by our QuickPoll application.",
     "dataController": {
@@ -385,26 +387,29 @@
   "impressum": {
     "title": "Imprint",
     "provider": {
-      "title": "Provider",
-      "name": "Skeptic Systems",
-      "address": "Sample Street 123",
-      "city": "12345 Sample City",
+      "title": "Information in accordance with § 5 TMG",
+      "name": "Skeptic Systems / Jonas Vieth",
+      "address": "Wienerstraße 25",
+      "city": "91056 Erlangen",
       "country": "Germany"
     },
     "contact": {
       "title": "Contact",
-      "email": "Email: info@skeptic-systems.de",
-      "phone": "Phone: +49 (0) 123 456789"
+      "email": "Email: mail@jonas-vieth.de"
     },
     "responsible": {
-      "title": "Responsible for Content",
-      "name": "Max Mustermann",
-      "address": "Sample Street 123",
-      "city": "12345 Sample City"
+      "title": "Responsible for content (Section 55 (2) RStV)",
+      "name": "Jonas Vieth",
+      "address": "Wienerstraße 25",
+      "city": "91056 Erlangen"
     },
     "disclaimer": {
       "title": "Disclaimer",
-      "content": "The contents of our pages have been created with the greatest care. However, we cannot guarantee the accuracy, completeness and timeliness of the content."
+      "content": "The contents of these pages were created with the greatest care. However, we cannot guarantee the accuracy, completeness and timeliness of the content."
+    },
+    "license": {
+      "title": "License",
+      "content": "This project is open source and licensed under the GNU General Public License v3.0 (GPLv3)."
     }
   }
 }
